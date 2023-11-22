@@ -1,11 +1,9 @@
-import mysql.connector
+from flask import Flask
+app = Flask("cus")
 
-cnx = mysql.connector.connect(
-  user='user', 
-  password='password',
-  host='db',   # Use the service name defined in docker-compose
-  database='mydatabase'
-)
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
 
-# Don't forget to close the connection when done
-cnx.close()
+if __name__ == '__main__':
+    app.run(debug=True, host="0.0.0.0")

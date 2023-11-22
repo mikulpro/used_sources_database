@@ -3,15 +3,18 @@ version: '3.8'
 services:
   app:
     build: .
+    command: python app.py
     depends_on:
       - db
     environment:
-      - MYSQL_HOST=db
+      - MYSQL_HOST=127.0.0.1:3306
       - MYSQL_USER=user
-      - MYSQL_PASSWORD=password
-      - MYSQL_DB=mydatabase
+      - MYSQL_PASSWORD=mysql1234
+      - MYSQL_DB=db1234
     ports:
-      - "8000:8000"
+      - "5000:5000"
+    volumes:
+      - .:/usr/src/app
 
   db:
     image: mysql:5.7
@@ -23,7 +26,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - db-data:/var/lib/mysql
+      - db_data:/var/lib/mysql
 
 volumes:
-  db-data:
+  db_data:
