@@ -24,6 +24,7 @@
             <tbody>
                 {% for book in books %}
                 <tr>
+                    <!-- NUTNO VYRESIT ERROR KDYZ BOOK.IMAGE JE NONE -->
                     <td><img src="{{ url_for('static', filename='images/' + book.image) }}" alt="Book image" height="200"></td>
                     <td>{{ book.title }}</td>
                     <td>{{ book.author }}</td>

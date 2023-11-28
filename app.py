@@ -37,6 +37,11 @@ def index():
     conn = get_db_connection()
     books = conn.execute('SELECT * FROM books').fetchall()
     conn.close()
+
+    # debug?
+    if not books:
+        books = []
+
     return render_template('index.html', books=books)
 
 @app.route('/add', methods=('GET', 'POST'))
@@ -50,7 +55,7 @@ def add():
         year = request.form['year']
         
         # Initialize image_filename as None or as an empty string
-        image_filename = None  # or image_filename = ''
+        image_filename = ''  # or image_filename = ''
         
         # For the image, you need to save it first
         image = request.files['image']
