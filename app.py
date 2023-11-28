@@ -58,9 +58,7 @@ def add():
             image_filename = secure_filename(image.filename)
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
             image.save(image_path)
-        else:
-            # Handle the case where no image is provided or set a default image
-            image_filename = 'default.jpg'  # for example, a default image
+            image_url = url_for('static', filename=f'images/{image_filename}')
 
         # Now, insert the new book into the database
         conn = get_db_connection()
