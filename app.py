@@ -78,10 +78,12 @@ def edit(id):
     # redirect to index page after editing
     return render_template('edit.html', book=book)
 
-@app.route('/delete/<int:id>', methods=('POST',))
+@app.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
-    # delete the book with the given id
-    # redirect to index page after deleting
+    conn = get_db_connection()
+    conn.execute('DELETE FROM books WHERE id = ?', (id,))
+    conn.commit()
+    conn.close()
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
