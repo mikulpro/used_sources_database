@@ -1,12 +1,36 @@
-from flask import Flask, request, render_template, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for
+from werkzeug.utils import secure_filename
+import os
 import sqlite3
 
-app = Flask("lorem")
+DATABASE = 'books.sqlite'
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'images'
 
 def get_db_connection():
-    conn = sqlite3.connect('books.db')
+    conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+def create_books_table():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    # This SQL statement creates a table with an image, title, author, type, and year column
+    # The data types may need to be adjusted to match your needs
+    create_table_sql = """
+    CREATE TABLE IF NOT EXISTS books (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        image TEXT,
+        title TEXT NOT NULL,
+        author TEXT NOT NULL,
+        type TEXT NOT NULL,
+        year INTEGER NOT NULL
+    );
+    """
+    cursor.execute(create_table_sql)
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 @app.route('/')
 def index():
@@ -17,12 +41,38 @@ def index():
 
 @app.route('/add', methods=('GET', 'POST'))
 def add():
+    create_books_table()
+
     if request.method == 'POST':
-        # process form data to add a new book
-        # redirect to index page after adding
+        title = request.form['title']
+        author = request.form['author']
+        book_type = request.form['type']
+        year = request.form['year']
+        
+        # Initialize image_filename as None or as an empty string
+        image_filename = None  # or image_filename = ''
+        
+        # For the image, you need to save it first
+        image = request.files['image']
+        if image and image.filename != '':
+            image_filename = secure_filename(image.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], image_filename)
+            image.save(image_path)
+        else:
+            # Handle the case where no image is provided or set a default image
+            image_filename = 'default.jpg'  # for example, a default image
+
+        # Now, insert the new book into the database
+        conn = get_db_connection()
+        conn.execute('INSERT INTO books (image, title, author, type, year) VALUES (?, ?, ?, ?, ?)',
+                     (image_filename, title, author, book_type, year))
+        conn.commit()
+        conn.close()
+
         return redirect(url_for('index'))
 
     return render_template('add.html')
+
 
 @app.route('/edit/<int:id>', methods=('GET', 'POST'))
 def edit(id):
