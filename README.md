@@ -9,7 +9,7 @@ Application using REST API for storing your book sources at one place so you can
 Documentation of API is available in SWI_dokumentace.pdf
 
 This project was heavily inspired by the following website build around RESTing:
-```http
+```
 https://flask-restful.readthedocs.io/en/latest/quickstart.html
 ```
 
@@ -50,7 +50,7 @@ To ensure everything is working correctly, try composing the docker image and th
 ```shell
 curl http://localhost:5000/todo1 -d "data=Remember the milk" -X PUT
 ```
-Or on Windows Powershell this alternaticve:
+Or on Windows Powershell this alternative:
 ```shell
 Invoke-WebRequest -Uri http://localhost:5000/todo1 -Method PUT -Body "data=Remember the milk" -ContentType "application/x-www-form-urlencoded"
 ```
