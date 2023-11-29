@@ -53,6 +53,7 @@ class InformationSource(Resource):
         if result == []:
             result = "No books found", 204        
         return result, 200
+api.add_resource(InformationSource, '/bookid/<int:id>', '/bookname/<string:name>', '/bookauth/<string:author>', '/bookyear/<int:year>')
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0")
