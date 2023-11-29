@@ -37,7 +37,7 @@ api.add_resource(TodoSimple, '/<string:todo_id>')   #
 class InformationSource(Resource):
 
     def get(self, id=None, name=None, author=None, year=None):
-        conn = self.get_db_connection()
+        conn = get_db_connection()
         query = "SELECT * FROM books"
         all_books = conn.execute(query, (id,)).fetchall()
         result = []
