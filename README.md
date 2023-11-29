@@ -8,6 +8,11 @@ Application using REST API for storing your book sources at one place so you can
 
 Documentation of API is available in SWI_dokumentace.pdf
 
+This project was heavily inspired by the following website build around RESTing:
+```http
+https://flask-restful.readthedocs.io/en/latest/quickstart.html
+```
+
 ---------------------------------------------------------
 
 ## Docker setup
