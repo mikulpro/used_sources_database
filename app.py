@@ -147,7 +147,7 @@ class Book(Resource):
             cursor.execute(
             'UPDATE books SET author = ?, name = ?, year = ? WHERE id = ?',
             (data.get('author', existing_book['author']),
-             data.get('name', existing_book['name']),
+             data.get('title', existing_book['title']),
              data.get('year', existing_book['year']),
              data['id'])
             )
