@@ -122,47 +122,78 @@ class Book(Resource):
         return jsonify(books_list), 200
 
     def put(self):
-        data = request.json  # Assuming the data is provided in JSON format in the request body
 
-        # Validate that the required fields are present in the JSON data
+        # Get the JSON data from the request
+        data = request.json
+
+        # Validate that the required fields are present in the JSON data and that they are correct
         if 'id' not in data:
             return {'error': 'Missing "id" field in JSON data'}, 400
+        if not is_integer(data['id']):
+            return {'error': 'Book id is not an integer'}, 400
         if 'title' not in data:
             return {'error': 'Missing "title" field in JSON data'}, 400
         if 'author' not in data:
             return {'error': 'Missing "author" field in JSON data'}, 400
         if 'type' not in data:
             return {'error': 'Missing "type" field in JSON data'}, 400
+        if data['type'] not in ['fiction', 'non-fiction']:
+            return {'error': 'Type must be "fiction" or "non-fiction"'}, 400
         if 'year' not in data:
             return {'error': 'Missing "year" field in JSON data'}, 400
+        if not is_integer(data['year']):
+            return {'error': 'Year is not an integer'}, 400
+        if len(data['year']) > 4:
+            return {'error': 'Year is too long'}, 400
 
+        # Establish a connection to the database
         conn = get_db_connection()
+        if conn is None:
+            return {'error': 'Could not connect to database'}, 500
         cursor = conn.cursor()
+        if cursor is None:
+            return {'error': 'Could not get cursor from database connection'}, 500
 
         # Check if the book with the provided ID exists
-        cursor.execute('SELECT * FROM books WHERE id = ?', (data['id'],))
+        try:
+            cursor.execute('SELECT * FROM books WHERE id = ?', (data['id'],))
+        except:
+            return {'error': 'Could not execute query to check whether provided ID exists in database'}, 500
         existing_book = cursor.fetchone()
 
         if existing_book:
-            cursor.execute(
-            'UPDATE books SET author = ?, name = ?, year = ? WHERE id = ?',
-            (data.get('author', existing_book['author']),
-             data.get('title', existing_book['title']),
-             data.get('year', existing_book['year']),
-             data['id'])
-            )
+            try:
+                cursor.execute(
+                'UPDATE books SET author = ?, name = ?, year = ? WHERE id = ?',
+                (data.get('author', existing_book['author']),
+                data.get('title', existing_book['title']),
+                data.get('year', existing_book['year']),
+                data['id'])
+                )
+            except:
+                return {'error': 'Could not execute query to update book in database'}, 500
             conn.commit()
             conn.close()
-            return {'message': 'Book updated successfully'}, 200
+            return {'message': f'Book with id {data[id]} updated successfully',
+                    'previous_author': f'{existing_book['author']}',
+                    'previous_title': f'{existing_book['title']}',
+                    'previous_year': f'{existing_book['year']}',
+                    'new_author': f'{data['author']}',
+                    'new_title': f'{data['title']}',
+                    'new_year': f'{data['year']}'
+                    }, 200
         else:
-            cursor.execute(
-            'INSERT INTO books (id, title, author, type, year) VALUES (?, ?, ?, ?, ?)',
-            (data['id'],
-             data['title'],
-             data['author'],
-             data['type'],
-             data['year'])
-            )
+            try:
+                cursor.execute(
+                'INSERT INTO books (id, title, author, type, year) VALUES (?, ?, ?, ?, ?)',
+                (data['id'],
+                data['title'],
+                data['author'],
+                data['type'],
+                data['year'])
+                )
+            except:
+                return {'error': 'Could not execute query to insert new book into database'}, 500
             conn.commit()
             conn.close()    
             return {'message': 'New book inserted successfully'}, 201
