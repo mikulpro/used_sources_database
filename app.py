@@ -7,6 +7,11 @@ DATABASE = 'books.sqlite'
 app = Flask(__name__)
 api = Api(app)
 parser = reqparse.RequestParser()
+parser.add_argument('id', type=int, required=True, help="ID cannot be blank and must be an integer.")
+parser.add_argument('title', required=True, help="Title cannot be blank.")
+parser.add_argument('author', required=True, help="Author cannot be blank.")
+parser.add_argument('type', required=True, help="Type must be either 'fiction' or 'non-fiction'.")
+parser.add_argument('year', type=int, required=True, help="Year cannot be blank and must be an integer lesser than 10000.")
 
 # Reserved for case of adding images to the database
 # app.config['UPLOAD_FOLDER'] = 'images'
@@ -313,7 +318,55 @@ class BookList(Resource):
         return {'books': books}, 200
 
     def post(self):
-        ...
+
+        # Parse the JSON body of the request
+        try:
+            book_data = request.get_json()
+        except:
+            return {'error': 'Invalid JSON format'}, 400
+
+        # Validate and insert each book
+        inserted_books = []
+        errors = []
+        conn = get_db_connection()
+        if conn is None:
+            return {'error': 'Could not connect to database'}, 500
+        cursor = conn.cursor()
+        if cursor is None:
+            return {'error': 'Could not get cursor from database connection'}, 500
+
+        for book in book_data:
+            if all(key in book for key in ['id', 'title', 'author', 'type', 'year']):
+                try:
+                    cursor.execute('INSERT INTO books (id, title, author, type, year) VALUES (?, ?, ?, ?, ?)',
+                                   (book['id'], book['title'], book['author'], book['type'], book['year']))
+                    inserted_books.append(book)
+                except sqlite3.Error as e:
+                    errors.append({'book': book, 'error': str(e)})
+            else:
+                errors.append({'book': book, 'error': 'Missing required fields'})
+
+        conn.commit()
+        conn.close()
+
+        # Return the result
+        if errors:
+            return {'inserted_books': inserted_books, 'errors': errors}, 207
+        else:
+            return {'message': 'All books inserted successfully', 'inserted_books': inserted_books}, 201
+
+    def trace(self):
+        return {'message': 'Disabled for security reasons.'}, 405
+
+    # not sure if correct
+    def head(self):
+        return {'headers': {
+            'header0': 'id',
+            'header1': 'title',
+            'header2': 'author',
+            'header3': 'type',
+            'header4': 'year'
+        } }, 200
 
 api.add_resource(Book, '/book')
 api.add_resource(BookList, '/booklist')
