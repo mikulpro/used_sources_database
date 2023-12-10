@@ -55,11 +55,14 @@ book_resource_fields = {
 
 class Book(Resource):
     def get(self):
+
+        # Get the query parameters from the request
         query_parameters = request.args
         query = 'SELECT * FROM books WHERE '
         query_conditions = []
         args = []
 
+        # Check query parameters
         if 'id' in query_parameters:
             id = query_parameters['id']
             if is_integer(id):
@@ -88,28 +91,35 @@ class Book(Resource):
                 return {'error': 'Type must be "fiction" or "non-fiction"'}, 400
             query_conditions.append('type = ?')
             args.append(type)
-
+        
+        # Construct the query
         if not query_conditions:
             return {'error': 'No query parameters provided'}, 400
-
         if len(query_conditions) == 1:
-            query += query_conditions[0]
-        
+            query += query_conditions[0]      
         if len(query_conditions) > 1:
             for condition in query_conditions[:-1]:
                 query += condition + ' AND '
             query += query_conditions[-1]
 
+        # Execute the query
         conn = get_db_connection()
+        if conn is None:
+            return {'error': 'Could not connect to database'}, 500
         cursor = conn.cursor()
-        books = cursor.execute(query, tuple(args)).fetchall()
+        if cursor is None:
+            return {'error': 'Could not get cursor from database connection'}, 500
+        try:
+            books = cursor.execute(query, tuple(args)).fetchall()
+        except:
+            return {'error': 'Could not execute query'}, 500
         conn.close()
 
+        # Return the results
         books_list = [dict(ix) for ix in books]
         if not books_list:
             return {'error': 'No books found'}, 404
-
-        return jsonify(books_list)
+        return jsonify(books_list), 200
 
     def put(self):
         data = request.json  # Assuming the data is provided in JSON format in the request body
