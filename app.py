@@ -45,6 +45,7 @@ api.add_resource(TodoSimple, '/<string:todo_id>')   #
                                                     #
 #####################################################
 
+# For marshalling
 book_resource_fields = {
     'id':       fields.Integer,
     'title':    fields.String,
@@ -212,9 +213,32 @@ class Book(Resource):
         return {'message': 'Disabled for security reasons.'}, 405
 
     def delete(self, book_id):
-        #TODO:
-        ...
-
+            
+            # Establish a connection to the database
+            conn = get_db_connection()
+            if conn is None:
+                return {'error': 'Could not connect to database'}, 500
+            cursor = conn.cursor()
+            if cursor is None:
+                return {'error': 'Could not get cursor from database connection'}, 500
+    
+            # Check if the book with the provided ID exists
+            try:
+                cursor.execute('SELECT * FROM books WHERE id = ?', (book_id,))
+            except:
+                return {'error': 'Could not execute query to check whether provided ID exists in database'}, 500
+            existing_book = cursor.fetchone()
+    
+            if existing_book:
+                try:
+                    cursor.execute('DELETE FROM books WHERE id = ?', (book_id,))
+                except:
+                    return {'error': 'Could not execute query to delete book from database'}, 500
+                conn.commit()
+                conn.close()
+                return {'message': f'Book with id {book_id} deleted successfully'}, 200
+            else:
+                return {'error': f'Book with id {book_id} does not exist'}, 404
 
 class BookList(Resource):
     def get(self):
