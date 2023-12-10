@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from flask_restful import Api, Resource, reqparse, fields
+from flask_restful import Api, Resource, reqparse, fields, marshal_with
 import sqlite3
 
 DATABASE = 'books.sqlite'
@@ -53,8 +53,12 @@ book_resource_fields = {
     'type':     fields.String,
     'year':     fields.Integer
 }
+book_list_fields = {
+    'books': fields.List(fields.Nested(book_resource_fields))
+}
 
 class Book(Resource):
+    @marshal_with(book_resource_fields)
     def get(self):
 
         # Get the query parameters from the request
@@ -111,21 +115,22 @@ class Book(Resource):
         if cursor is None:
             return {'error': 'Could not get cursor from database connection'}, 500
         try:
-            books = cursor.execute(query, tuple(args)).fetchall()
+            book = cursor.execute(query, tuple(args)).fetchone()
         except:
-            return {'error': 'Could not execute query'}, 500
+            return {'error': 'Could not execute query to fetch book from database'}, 500
         conn.close()
 
-        # Return the results
-        books_list = [dict(ix) for ix in books]
-        if not books_list:
+        # Return the result
+        if book is None:
             return {'error': 'No books found'}, 404
-        return jsonify(books_list), 200
+        return book, 200
 
     def put(self):
 
         # Get the JSON data from the request
         data = request.json
+        if data is None:
+            return {'error': 'No JSON data provided'}, 400
 
         # Validate that the required fields are present in the JSON data and that they are correct
         if 'id' not in data:
@@ -241,18 +246,72 @@ class Book(Resource):
                 return {'error': f'Book with id {book_id} does not exist'}, 404
 
 class BookList(Resource):
+    @marshal_with(book_list_fields)
     def get(self):
+        # Get the query parameters from the request
+        query_parameters = request.args
+        query = 'SELECT * FROM books WHERE '
+        query_conditions = []
+        args = []
+
+        # Check query parameters
+        if 'id' in query_parameters:
+            id = query_parameters['id']
+            if is_integer(id):
+                query_conditions.append('id = ?')
+                args.append(id)
+            else:
+                return {'error': 'Book id is not an integer'}, 400
+        if 'author' in query_parameters:
+            query_conditions.append('author = ?')
+            args.append(query_parameters['author'])
+        if 'title' in query_parameters:
+            query_conditions.append('title = ?')
+            args.append(query_parameters['title'])
+        if 'year' in query_parameters:
+            year = query_parameters['year']
+            if is_integer(year) and len(year) <= 4:
+                query_conditions.append('year = ?')
+                args.append(year)
+            if not is_integer(year):
+                return {'error': 'Year is not an integer'}, 400
+            if len(year) > 4:
+                return {'error': 'Year is too long'}, 400
+        if 'type' in query_parameters:
+            type = query_parameters['type']
+            if type not in ['fiction', 'non-fiction']:
+                return {'error': 'Type must be "fiction" or "non-fiction"'}, 400
+            query_conditions.append('type = ?')
+            args.append(type)
+        
+        # Construct the query
+        if not query_conditions:
+            return {'error': 'No query parameters provided'}, 400
+        if len(query_conditions) == 1:
+            query += query_conditions[0]      
+        if len(query_conditions) > 1:
+            for condition in query_conditions[:-1]:
+                query += condition + ' AND '
+            query += query_conditions[-1]
+
+        # Execute the query
         conn = get_db_connection()
+        if conn is None:
+            return {'error': 'Could not connect to database'}, 500
         cursor = conn.cursor()
-        books = cursor.execute('SELECT * FROM books').fetchall()
+        if cursor is None:
+            return {'error': 'Could not get cursor from database connection'}, 500
+        try:
+            books = cursor.execute(query, tuple(args)).fetchall()
+        except:
+            return {'error': 'Could not execute query to fetch book from database'}, 500
         conn.close()
 
-        books_list = [dict(ix) for ix in books]
-        if not books_list:
+        # Return the result
+        if books is None:
             return {'error': 'No books found'}, 404
+        return {'books': books}, 200
 
-        return jsonify(books_list)
-    
     def post(self):
         ...
 
