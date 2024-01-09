@@ -15,7 +15,7 @@ def get_db_connection():
 def create_books_table():
     conn = get_db_connection()
     cursor = conn.cursor()
-    # This SQL statement creates a table with an image, title, author, type, and year column
+    # This SQL statement creates a table with an image, titl  e, author, type, and year column
     # The data types may need to be adjusted to match your needs
     create_table_sql = """
     CREATE TABLE IF NOT EXISTS books (
