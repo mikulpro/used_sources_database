@@ -185,13 +185,13 @@ class Book(Resource):
                 return {'error': 'Could not execute query to update book in database'}, 500
             conn.commit()
             conn.close()
-            return {'message': f'Book with id {data[id]} updated successfully',
-                    'previous_author': f'{existing_book['author']}',
-                    'previous_title': f'{existing_book['title']}',
-                    'previous_year': f'{existing_book['year']}',
-                    'new_author': f'{data['author']}',
-                    'new_title': f'{data['title']}',
-                    'new_year': f'{data['year']}'
+            return {'message': f"Book with id {data['id']} updated successfully",
+                    'previous_author': f"{existing_book['author']}",
+                    'previous_title': f"{existing_book['title']}",
+                    'previous_year': f"{existing_book['year']}",
+                    'new_author': f"{data['author']}",
+                    'new_title': f"{data['title']}",
+                    'new_year': f"{data['year']}"
                     }, 200
         else:
             try:
