@@ -159,3 +159,27 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+docker-compose.yml
+swi/Include/site/python3.12/greenlet/greenlet.h
+swi/Scripts/activate
+swi/Scripts/activate.bat
+swi/Scripts/Activate.ps1
+swi/Scripts/deactivate.bat
+swi/Scripts/flask.exe
+swi/Scripts/pip.exe
+swi/Scripts/pip3.12.exe
+swi/Scripts/pip3.exe
+swi/Scripts/python.exe
+swi/Scripts/pythonw.exe
+docker-compose.yml
+swi/Include/site/python3.12/greenlet/greenlet.h
+swi/Scripts/activate
+swi/Scripts/activate.bat
+swi/Scripts/Activate.ps1
+swi/Scripts/deactivate.bat
+swi/Scripts/flask.exe
+swi/Scripts/pip.exe
+swi/Scripts/pip3.12.exe
+swi/Scripts/pip3.exe
+swi/Scripts/python.exe
+swi/Scripts/pythonw.exe
