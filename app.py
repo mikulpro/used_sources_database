@@ -235,7 +235,7 @@ class Book(Resource):
         if existing_book:
             try:
                 cursor.execute(
-                'UPDATE books SET author = ?, name = ?, year = ? WHERE id = ?',
+                'UPDATE books SET author = ?, title = ?, year = ? WHERE id = ?',
                 (data.get('author', existing_book['author']),
                 data.get('title', existing_book['title']),
                 data.get('year', existing_book['year']),
