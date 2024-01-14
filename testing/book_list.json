@@ -1,1 +1,19 @@
-{ "todo" : "" }
+{
+    "book1" :
+    { 
+    "id" : 1,
+    "author" : "Kim",
+    "title" : "Post 1",
+    "year" : "2019",
+    "type" : "fiction"
+    },
+
+    "book2" :
+    { 
+    "id" : 2,
+    "author" : "Luke",
+    "title" : "How to skywalk",
+    "year" : "3000",
+    "type" : "non-fiction"
+    }
+}
