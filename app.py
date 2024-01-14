@@ -130,6 +130,66 @@ class Book(Resource):
             return {'error': 'No books found'}, 404
         return book, 200
 
+    def post(self):
+
+        # Get the JSON data from the request
+        data = request.json
+        if data is None:
+            return {'error': 'No JSON data provided'}, 400
+
+        # Validate that the required fields are present in the JSON data and that they are correct
+        if 'id' not in data:
+            return {'error': 'Missing "id" field in JSON data'}, 400
+        if not is_integer(data['id']):
+            return {'error': 'Book id is not an integer'}, 400
+        if 'title' not in data:
+            return {'error': 'Missing "title" field in JSON data'}, 400
+        if 'author' not in data:
+            return {'error': 'Missing "author" field in JSON data'}, 400
+        if 'type' not in data:
+            return {'error': 'Missing "type" field in JSON data'}, 400
+        if data['type'] not in ['fiction', 'non-fiction']:
+            return {'error': 'Type must be "fiction" or "non-fiction"'}, 400
+        if 'year' not in data:
+            return {'error': 'Missing "year" field in JSON data'}, 400
+        if not is_integer(data['year']):
+            return {'error': 'Year is not an integer'}, 400
+        if len(data['year']) > 4:
+            return {'error': 'Year is too long'}, 400
+
+        # Establish a connection to the database
+        conn = get_db_connection()
+        if conn is None:
+            return {'error': 'Could not connect to database'}, 500
+        cursor = conn.cursor()
+        if cursor is None:
+            return {'error': 'Could not get cursor from database connection'}, 500
+
+        # Check if the book with the provided ID exists
+        try:
+            cursor.execute('SELECT * FROM books WHERE id = ?', (data['id'],))
+        except:
+            return {'error': 'Could not execute query to check whether provided ID exists in database'}, 500
+        existing_book = cursor.fetchone()
+
+        if existing_book:
+            return {'error': 'Book with provided ID alreadt exists'}, 400
+        else:
+            try:
+                cursor.execute(
+                'INSERT INTO books (id, title, author, type, year) VALUES (?, ?, ?, ?, ?)',
+                (data['id'],
+                data['title'],
+                data['author'],
+                data['type'],
+                data['year'])
+                )
+            except:
+                return {'error': 'Could not execute query to insert new book into database'}, 500
+            conn.commit()
+            conn.close()    
+            return {'message': 'New book inserted successfully'}, 201
+
     def put(self):
 
         # Get the JSON data from the request
@@ -194,20 +254,7 @@ class Book(Resource):
                     'new_year': f"{data['year']}"
                     }, 200
         else:
-            try:
-                cursor.execute(
-                'INSERT INTO books (id, title, author, type, year) VALUES (?, ?, ?, ?, ?)',
-                (data['id'],
-                data['title'],
-                data['author'],
-                data['type'],
-                data['year'])
-                )
-            except:
-                return {'error': 'Could not execute query to insert new book into database'}, 500
-            conn.commit()
-            conn.close()    
-            return {'message': 'New book inserted successfully'}, 201
+            return {'error': 'Book with provided ID does not exist'}, 404
         
     # not sure this is correct
     def head(self):
