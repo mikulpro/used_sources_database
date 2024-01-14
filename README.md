@@ -64,3 +64,16 @@ The same content should be gotten by then calling the following command:
 ```shell
 curl http://localhost:5000/todo1
 ```
+
+---------------------------------------------------------
+
+## Actual HTTP communication usage
+
+To GET either book or booklist with specified parameter, simply write the parameter with corresponding value after question mark.
+
+For example to GET book with ID number 1, request this:
+```shell
+curl http://localhost:5000/book?id=1
+```
+
+To insert a new book or booklist to the database using POST method or to update an existing book or booklist in the database using the PUT method, you have to call a proper HTTP request with .json file containing all information that should be written to the database.
