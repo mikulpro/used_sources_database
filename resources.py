@@ -229,8 +229,17 @@ class Book(Resource):
     def trace(self):
         return {'message': 'Disabled for security reasons.'}, 405
 
-    def delete(self, book_id):
-            
+    #def delete(self, book_id):
+    def delete(self):
+
+            query_parameters = request.args
+            if 'id' in query_parameters:
+                book_id = query_parameters['id']
+                if not is_integer(book_id):
+                    return {'error': 'Book id is not an integer'}, 400
+            else:
+                return {'error': 'No book id provided'}, 400
+
             # Establish a connection to the database
             conn = get_db_connection()
             if conn is None:
