@@ -2,16 +2,17 @@ import sys
 import requests
 import json
 
-URL = 'http://127.0.0.1:5000/'
+URL = 'http://127.0.0.1:5000/books/'
+BOOK = 'book'
 
 TO_TEST = [
-    [f"{URL}book", "POST", "testing/single_book.json", "Correct book post"],
-    [f"{URL}book", "POST", "testing/wrong_id.json", "String ID book post"],
-    [f"{URL}book", "POST", "testing/negative_id.json", "Negative ID book post"],
-    [f"{URL}book", "PUT", "testing/edited_book.json", "Editing existing book"],
-    [f"{URL}book", "PUT", "testing/nonexisting_book.json", "Editing nonexisting book"],
-    [f"{URL}book?id=1", "GET", ""],
-    [f"{URL}book?id=1", "DELETE", ""]
+    [f"{URL}{BOOK}", "POST", "testing/single_book.json", "Correct book post"],
+    [f"{URL}{BOOK}", "POST", "testing/wrong_id.json", "String ID book post"],
+    [f"{URL}{BOOK}", "POST", "testing/negative_id.json", "Negative ID book post"],
+    [f"{URL}{BOOK}", "PUT", "testing/edited_book.json", "Editing existing book"],
+    [f"{URL}{BOOK}", "PUT", "testing/nonexisting_book.json", "Editing nonexisting book"],
+    [f"{URL}{BOOK}?id=1", "GET", "", "Getting book with ID 1"],
+    [f"{URL}{BOOK}?id=1", "DELETE", "", "Deleting book with ID 1"]
 ]
 
 def main():

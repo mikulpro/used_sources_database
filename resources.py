@@ -1,6 +1,7 @@
 # resources.py
 from flask_restx import Resource, Namespace, fields, marshal_with
-from models import get_db_connection, is_integer
+from flask import request
+from utils import get_db_connection, is_integer
 
 api = Namespace('books', description='Book related operations')
 
@@ -19,7 +20,7 @@ book_list_model = api.model('BookList', {
 })
 class Book(Resource):
     @api.marshal_with(book_model)
-    def get(self):
+    def get(self, id=None):
 
         # Get the query parameters from the request
         query_parameters = request.args
@@ -85,6 +86,7 @@ class Book(Resource):
             return {'error': 'No books found'}, 404
         return book, 200
 
+    # TODO: might need id=None (same as get)
     @api.expect(book_model)
     def post(self):
 
