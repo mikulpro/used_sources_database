@@ -9,7 +9,7 @@ TO_TEST = [
     [f"{URL}book", "POST", "testing/wrong_id.json", "String ID book post"],
     [f"{URL}book", "POST", "testing/negative_id.json", "Negative ID book post"],
     [f"{URL}book", "PUT", "testing/edited_book.json", "Editing existing book"],
-    [f"{URL}book", "PUT", "testing/nonexisting_book.json", "Editing nonexistend book"],
+    [f"{URL}book", "PUT", "testing/nonexisting_book.json", "Editing nonexisting book"],
     [f"{URL}book?id=1", "GET", ""],
     [f"{URL}book?id=1", "DELETE", ""]
 ]
