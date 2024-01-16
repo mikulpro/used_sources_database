@@ -11,8 +11,8 @@ TO_TEST = [
     [f"{URL}{BOOK}", "POST", "testing/negative_id.json", "Negative ID book post"],
     [f"{URL}{BOOK}", "PUT", "testing/edited_book.json", "Editing existing book"],
     [f"{URL}{BOOK}", "PUT", "testing/nonexisting_book.json", "Editing nonexisting book"],
-    [f"{URL}{BOOK}?id=1", "GET", "", "Getting book with ID 1"],
-    [f"{URL}{BOOK}?id=1", "DELETE", "", "Deleting book with ID 1"]
+    [f"{URL}{BOOK}?id=1", "GET", None, "Getting book with ID 1"],
+    [f"{URL}{BOOK}?id=1", "DELETE", None, "Deleting book with ID 1"]
 ]
 
 def main():

@@ -20,7 +20,8 @@ book_list_model = api.model('BookList', {
 })
 class Book(Resource):
     @api.marshal_with(book_model)
-    def get(self, id=None):
+    #def get(self, id=None):
+    def get(self):
 
         # Get the query parameters from the request
         query_parameters = request.args
@@ -131,7 +132,7 @@ class Book(Resource):
         existing_book = cursor.fetchone()
 
         if existing_book:
-            return {'error': 'Book with provided ID alreadt exists'}, 400
+            return {'error': 'Book with provided ID already exists'}, 400
         else:
             try:
                 cursor.execute(
@@ -375,5 +376,5 @@ class BookList(Resource):
             'header4': 'year'
         } }, 200
 
-api.add_resource(Book, '/book/<int:id>')
+api.add_resource(Book, '/book')
 api.add_resource(BookList, '/booklist')
