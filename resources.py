@@ -1,5 +1,5 @@
 # resources.py
-from flask_restx import Resource, Namespace, fields, marshal_with
+from flask_restx import Resource, Namespace, fields, marshal_with, reqparse
 from flask import request
 from utils import get_db_connection, is_integer
 
@@ -18,9 +18,23 @@ book_model = api.model('Book', {
 book_list_model = api.model('BookList', {
     'books': fields.List(fields.Nested(book_model))
 })
+
+parser = reqparse.RequestParser()
+parser.add_argument('id', type=int, required=True, help="ID cannot be blank and must be an integer.")
+parser.add_argument('title', required=False, help="Title cannot be blank.")
+parser.add_argument('author', required=False, help="Author cannot be blank.")
+parser.add_argument('type', required=False, help="Type must be either 'fiction' or 'non-fiction'.")
+parser.add_argument('year', type=int, required=False, help="Year cannot be blank and must be an integer lesser than 10000.")
+
+
 class Book(Resource):
+    @api.doc(description="Retrieve a book based on query parameters. Can filter by id, author, title, year, and type.")
     @api.marshal_with(book_model)
-    #def get(self, id=None):
+    @api.expect(parser)
+    @api.response(200, 'Success')
+    @api.response(400, 'Validation Error')
+    @api.response(404, 'Book not found')
+    @api.response(500, 'Internal Server Error')
     def get(self):
 
         # Get the query parameters from the request
@@ -87,8 +101,12 @@ class Book(Resource):
             return {'error': 'No books found'}, 404
         return book, 200
 
-    # TODO: might need id=None (same as get)
-    @api.expect(book_model)
+    
+    @api.doc(description="Add a new book to the database.")
+    @api.expect(book_model, validate=True)
+    @api.response(201, 'Book Created')
+    @api.response(400, 'Validation Error')
+    @api.response(500, 'Internal Server Error')
     def post(self):
 
         # Get the JSON data from the request
@@ -113,7 +131,7 @@ class Book(Resource):
             return {'error': 'Missing "year" field in JSON data'}, 400
         if not is_integer(data['year']):
             return {'error': 'Year is not an integer'}, 400
-        if len(data['year']) > 4:
+        if len(str(data['year'])) > 4:
             return {'error': 'Year is too long'}, 400
 
         # Establish a connection to the database
@@ -149,7 +167,12 @@ class Book(Resource):
             conn.close()    
             return {'message': 'New book inserted successfully'}, 201
 
-    @api.expect(book_model)
+    @api.doc(description="Update an existing book.")
+    @api.expect(book_model, validate=True)
+    @api.response(200, 'Book Updated')
+    @api.response(400, 'Validation Error')
+    @api.response(404, 'Book not found')
+    @api.response(500, 'Internal Server Error')
     def put(self):
 
         # Get the JSON data from the request
@@ -229,7 +252,12 @@ class Book(Resource):
     def trace(self):
         return {'message': 'Disabled for security reasons.'}, 405
 
-    #def delete(self, book_id):
+    @api.doc(description="Delete a book based on its ID.")
+    @api.expect(parser)
+    @api.response(200, 'Book Deleted')
+    @api.response(400, 'Validation Error')
+    @api.response(404, 'Book not found')
+    @api.response(500, 'Internal Server Error')
     def delete(self):
 
             query_parameters = request.args
@@ -267,7 +295,12 @@ class Book(Resource):
                 return {'error': f'Book with id {book_id} does not exist'}, 404
 
 class BookList(Resource):
+    @api.doc(description="Retrieve a list of books based on query parameters. Can filter by id, author, title, year, and type.")
     @api.marshal_with(book_list_model)
+    @api.response(200, 'Success')
+    @api.response(400, 'Validation Error')
+    @api.response(404, 'No Books Found')
+    @api.response(500, 'Internal Server Error')
     def get(self):
         # Get the query parameters from the request
         query_parameters = request.args
@@ -333,7 +366,12 @@ class BookList(Resource):
             return {'error': 'No books found'}, 404
         return {'books': books}, 200
 
+    @api.doc(description="Add multiple new books to the database.")
     @api.expect(book_model, validate=True)
+    @api.response(201, 'Books Created')
+    @api.response(207, 'Partial Success with Errors')
+    @api.response(400, 'Validation Error')
+    @api.response(500, 'Internal Server Error')
     def post(self):
 
         # Parse the JSON body of the request
@@ -371,11 +409,14 @@ class BookList(Resource):
             return {'inserted_books': inserted_books, 'errors': errors}, 207
         else:
             return {'message': 'All books inserted successfully', 'inserted_books': inserted_books}, 201
-
+            
+    @api.doc(description="TRACE method, disabled for security reasons.")
+    @api.response(405, 'Method Not Allowed')
     def trace(self):
         return {'message': 'Disabled for security reasons.'}, 405
 
-    # not sure if correct
+    @api.doc(description="HEAD method to retrieve headers for the book list.")
+    @api.response(200, 'Success')
     def head(self):
         return {'headers': {
             'header0': 'id',
