@@ -7,7 +7,7 @@ services:
     depends_on:
       - db
     environment:
-      - MYSQL_HOST=127.0.0.1:3306
+      - MYSQL_HOST=127.0.0.1:8095
       - MYSQL_USER=user
       - MYSQL_PASSWORD=mysql1234
       - MYSQL_DB=db1234
@@ -24,7 +24,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: mysql1234
     ports:
-      - "3306:3306"
+      - "8095:8095"
     volumes:
       - db_data:/var/lib/mysql
 
