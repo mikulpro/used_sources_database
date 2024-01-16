@@ -24,9 +24,13 @@ def get_db_connection():
 
 @staticmethod
 def is_integer(s):
+    """After update chcecks also positivity"""
     try:
         int(s)
-        return True
+        if int(s) >= 0:
+            return True
+        else: 
+            return False
     except ValueError:
         return False
 
