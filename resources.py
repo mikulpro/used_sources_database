@@ -1,10 +1,24 @@
 # resources.py
-from flask_restful import Resource, reqparse, marshal_with, request
+from flask_restx import Resource, Namespace, fields, marshal_with
 from models import get_db_connection, is_integer
-from fields import book_resource_fields, book_list_fields
 
+api = Namespace('books', description='Book related operations')
+
+# Define individual book model
+book_model = api.model('Book', {
+    'id': fields.Integer,
+    'title': fields.String,
+    'author': fields.String,
+    'type': fields.String,
+    'year': fields.Integer
+})
+
+# Define list of books model
+book_list_model = api.model('BookList', {
+    'books': fields.List(fields.Nested(book_model))
+})
 class Book(Resource):
-    @marshal_with(book_resource_fields)
+    @api.marshal_with(book_model)
     def get(self):
 
         # Get the query parameters from the request
@@ -71,6 +85,7 @@ class Book(Resource):
             return {'error': 'No books found'}, 404
         return book, 200
 
+    @api.expect(book_model)
     def post(self):
 
         # Get the JSON data from the request
@@ -131,6 +146,7 @@ class Book(Resource):
             conn.close()    
             return {'message': 'New book inserted successfully'}, 201
 
+    @api.expect(book_model)
     def put(self):
 
         # Get the JSON data from the request
@@ -239,7 +255,7 @@ class Book(Resource):
                 return {'error': f'Book with id {book_id} does not exist'}, 404
 
 class BookList(Resource):
-    @marshal_with(book_list_fields)
+    @api.marshal_with(book_list_model)
     def get(self):
         # Get the query parameters from the request
         query_parameters = request.args
@@ -305,6 +321,7 @@ class BookList(Resource):
             return {'error': 'No books found'}, 404
         return {'books': books}, 200
 
+    @api.expect(book_model, validate=True)
     def post(self):
 
         # Parse the JSON body of the request
@@ -355,3 +372,6 @@ class BookList(Resource):
             'header3': 'type',
             'header4': 'year'
         } }, 200
+
+api.add_resource(Book, '/book/<int:id>')
+api.add_resource(BookList, '/booklist')
