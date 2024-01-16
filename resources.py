@@ -1,5 +1,5 @@
 # resources.py
-from flask_restful import Resource, reqparse, marshal_with
+from flask_restful import Resource, reqparse, marshal_with, request
 from models import get_db_connection, is_integer
 from fields import book_resource_fields, book_list_fields
 
