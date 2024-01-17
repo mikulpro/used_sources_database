@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from db_init import db
-
-from sqlalchemy import Integer, String, Column, ForeignKey
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from db_init import db
 
 # class Book(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
@@ -28,7 +27,7 @@ booklist_book_table = db.Table(
     "booklist_book",
     db.metadata,
     Column("booklist_id", ForeignKey("booklists.id"), primary_key=True),
-    Column("book_id", ForeignKey("books.id"), primary_key=True)
+    Column("book_id", ForeignKey("books.id"), primary_key=True),
 )
 
 

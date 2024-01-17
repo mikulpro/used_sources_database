@@ -1,2 +1,2 @@
 # config.py
-DATABASE = 'books.sqlite'
+DATABASE = "books.sqlite"

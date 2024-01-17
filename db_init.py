@@ -1,4 +1,4 @@
-#import sqlite3
+# import sqlite3
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 
@@ -10,10 +10,10 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 
 # old
-#connection = sqlite3.connect('books.db')
+# connection = sqlite3.connect('books.db')
 
 # with open('schema.sql') as f:
 #     connection.executescript(f.read())
 
-#connection.commit()
-#connection.close()
+# connection.commit()
+# connection.close()

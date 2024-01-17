@@ -1,6 +1,17 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QTextEdit, QLineEdit, QLabel, QComboBox
+
 import requests
+from PyQt5.QtWidgets import (
+    QApplication,
+    QComboBox,
+    QLabel,
+    QLineEdit,
+    QPushButton,
+    QTextEdit,
+    QVBoxLayout,
+    QWidget,
+)
+
 
 class HttpRequestTester(QWidget):
     def __init__(self):
@@ -13,33 +24,33 @@ class HttpRequestTester(QWidget):
 
         # URL Input
         self.url_input = QLineEdit(self)
-        layout.addWidget(QLabel('URL:'))
+        layout.addWidget(QLabel("URL:"))
         layout.addWidget(self.url_input)
 
         # Method Selection
         self.method_selector = QComboBox(self)
-        self.method_selector.addItems(['GET', 'POST', 'PUT', 'DELETE'])
-        layout.addWidget(QLabel('Method:'))
+        self.method_selector.addItems(["GET", "POST", "PUT", "DELETE"])
+        layout.addWidget(QLabel("Method:"))
         layout.addWidget(self.method_selector)
 
         # Request Body Input
         self.request_body = QTextEdit(self)
-        layout.addWidget(QLabel('Request Body:'))
+        layout.addWidget(QLabel("Request Body:"))
         layout.addWidget(self.request_body)
 
         # Send Button
-        send_btn = QPushButton('Send Request', self)
+        send_btn = QPushButton("Send Request", self)
         send_btn.clicked.connect(self.sendRequest)
         layout.addWidget(send_btn)
 
         # Response Display
         self.response_display = QTextEdit(self)
         self.response_display.setReadOnly(True)
-        layout.addWidget(QLabel('Response:'))
+        layout.addWidget(QLabel("Response:"))
         layout.addWidget(self.response_display)
 
         self.setLayout(layout)
-        self.setWindowTitle('HTTP Request Tester')
+        self.setWindowTitle("HTTP Request Tester")
 
     def sendRequest(self):
         url = self.url_input.text()
@@ -52,7 +63,8 @@ class HttpRequestTester(QWidget):
         except Exception as e:
             self.response_display.setText(str(e))
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = HttpRequestTester()
     ex.show()
