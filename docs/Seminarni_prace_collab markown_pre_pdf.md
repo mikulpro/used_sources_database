@@ -1,5 +1,11 @@
 # Seminarní práce
 
+## Skutečná seminárka
+Seminárka se nachází na tomto odkazu:
+```url
+https://ujepcz-my.sharepoint.com/:w:/g/personal/st95120_students_ujep_cz/EfFVFdw_Dm1JqCZ5-K4EiNABmqTJRWtLZp6QfFUj6iJrOg?e=xfBgwn
+```
+
 ## INFO
 - Založil jsem aby jsme sem přidávali info (než zapomeneme) do seminární práce.
 - Také protože jste mě leavnuli tady kek.
