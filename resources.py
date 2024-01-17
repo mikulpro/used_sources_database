@@ -197,7 +197,7 @@ class Book(Resource):
             return {'error': 'Missing "year" field in JSON data'}, 400
         if not is_integer(data['year']):
             return {'error': 'Year is not an integer'}, 400
-        if len(data['year']) > 4:
+        if len(str(data['year'])) > 4:
             return {'error': 'Year is too long'}, 400
 
         # Establish a connection to the database
