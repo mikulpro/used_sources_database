@@ -1,5 +1,4 @@
-{
-    "book1" :
+[
     { 
     "id" : "meow",
     "author" : "Kim",
@@ -7,8 +6,6 @@
     "year" : 2019,
     "type" : "fiction"
     },
-
-    "book2" :
     { 
     "id" : 94,
     "author" : "Luke",
@@ -16,8 +13,6 @@
     "year" : "wrong year",
     "type" : "non-fiction"
     },
-
-    "book3" :
     { 
     "id" : 95,
     "author" : "Jane Ostin",
@@ -25,4 +20,4 @@
     "year" : 1813,
     "type" : "Alabama"
     }
-}
+]

@@ -1,5 +1,4 @@
-{
-    "book1" :
+[
     { 
     "id" : 91,
     "author" : "Kim",
@@ -7,8 +6,6 @@
     "year" : 2019,
     "type" : "fiction"
     },
-
-    "book2" :
     { 
     "id" : 92,
     "author" : "Luke",
@@ -16,8 +13,6 @@
     "year" : 3000,
     "type" : "non-fiction"
     },
-
-    "book3" :
     { 
     "id" : 93,
     "author" : "Jane Ostin",
@@ -25,4 +20,4 @@
     "year" : 1813,
     "type" : "fiction"
     }
-}
+]
