@@ -1,0 +1,28 @@
+{
+    "book1" :
+    { 
+    "id" : "meow",
+    "author" : "Kim",
+    "title" : "Post 1",
+    "year" : 2019,
+    "type" : "fiction"
+    },
+
+    "book2" :
+    { 
+    "id" : 94,
+    "author" : "Luke",
+    "title" : "How to skywalk",
+    "year" : "wrong year",
+    "type" : "non-fiction"
+    },
+
+    "book3" :
+    { 
+    "id" : 95,
+    "author" : "Jane Ostin",
+    "title" : "Pride and Prejudice",
+    "year" : 1813,
+    "type" : "Alabama"
+    }
+}

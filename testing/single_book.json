@@ -2,6 +2,6 @@
     "id" : 1,
     "author" : "Kim",
     "title" : "Post 1",
-    "year" : "2019",
+    "year" : 2019,
     "type" : "fiction"
 }
