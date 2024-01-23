@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import List
 
 from db_init import db
 
@@ -6,12 +7,16 @@ from sqlalchemy import Integer, String, Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
-# class Book(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String, nullable=False)
-#     author = db.Column(db.String, nullable=False)
-#     type = db.Column(db.String, nullable=False)
-#     year = db.Column(db.Integer, nullable=False)
+
+class BookType(db.Model):
+    __tablename__ = "booktypes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=False)
+    books: Mapped[List["Book"]] = relationship(back_populates="type")
+
+    def __str__(self):
+        return self.name
 
 
 class Book(db.Model):
@@ -19,8 +24,9 @@ class Book(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(nullable=False)
-    username: Mapped[str] = mapped_column(nullable=False)
-    username: Mapped[str] = mapped_column(nullable=False)
+    author: Mapped[str] = mapped_column(nullable=False)
+    type_id: Mapped[int] = mapped_column(ForeignKey("booktypes.id"))
+    type: Mapped["BookType"] = relationship(back_populates="books")
     year: Mapped[int] = mapped_column(nullable=False)
 
 
@@ -36,4 +42,4 @@ class BookList(db.Model):
     __tablename__ = "booklists"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    books: Mapped[list[Book]] = relationship(secondary=booklist_book_table)
+    books: Mapped[list["Book"]] = relationship(secondary=booklist_book_table)
