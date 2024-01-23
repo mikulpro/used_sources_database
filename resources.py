@@ -64,7 +64,7 @@ class Book(Resource):
                 query_conditions.append("id = ?")
                 args.append(id)
             else:
-                return {"error": "Book id is not an integer"}, 400
+                return {"error": "Book id is not a positive integer"}, 400
         if "author" in query_parameters:
             query_conditions.append("author = ?")
             args.append(query_parameters["author"])
@@ -289,7 +289,7 @@ class Book(Resource):
         if "id" in query_parameters:
             book_id = query_parameters["id"]
             if not is_integer(book_id):
-                return {"error": "Book id is not an integer"}, 400
+                return {"error": "Book id is not a positive integer"}, 400
         else:
             return {"error": "No book id provided"}, 400
 
