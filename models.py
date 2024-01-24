@@ -41,4 +41,5 @@ class BookList(db.Model):
     __tablename__ = "booklists"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column()
     books: Mapped[list["Book"]] = relationship(secondary=booklist_book_table)

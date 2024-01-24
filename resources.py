@@ -222,9 +222,6 @@ class Book(Resource):
             return {"error": "Book wasn't deleted"}, 500
 
 
-
-
-
 class BookList(Resource):
     @api.doc(
         description="Retrieve a list of books based on query parameters. Can filter by id, author, title, year, and type."
@@ -234,70 +231,48 @@ class BookList(Resource):
     @api.response(400, "Validation Error")
     @api.response(404, "No Books Found")
     @api.response(500, "Internal Server Error")
-    def get(self):
-        # Get the query parameters from the request
-        query_parameters = request.args
-        query = "SELECT * FROM books WHERE "
-        query_conditions = []
-        args = []
+    def get(self, book_id=None):
+        if book_id:
+            result = Bookdb.query.get(book_id)
+        else:
+            # Start with a base query
+            query = db.session.query(Bookdb)
 
-        # Check query parameters
-        if "id" in query_parameters:
-            id = query_parameters["id"]
-            if is_integer(id):
-                query_conditions.append("id = ?")
-                args.append(id)
-            else:
-                return {"error": "Book id is not an integer"}, 400
-        if "author" in query_parameters:
-            query_conditions.append("author = ?")
-            args.append(query_parameters["author"])
-        if "title" in query_parameters:
-            query_conditions.append("title = ?")
-            args.append(query_parameters["title"])
-        if "year" in query_parameters:
-            year = query_parameters["year"]
-            if is_integer(year) and len(year) <= 4:
-                query_conditions.append("year = ?")
-                args.append(year)
-            if not is_integer(year):
-                return {"error": "Year is not an integer"}, 400
-            if len(year) > 4:
-                return {"error": "Year is too long"}, 400
-        if "type" in query_parameters:
-            book_type = query_parameters["type"]
-            if book_type not in ["fiction", "non-fiction"]:
-                return {"error": 'Type must be "fiction" or "non-fiction"'}, 400
-            query_conditions.append("type = ?")
-            args.append(book_type)
+            # Check query parameters
+            if "id" in request.args:
+                id = request.args["id"]
+                if is_integer(id):
+                    query = query.filter(Bookdb.id == id)
+                else:
+                    return {"error": "Book id is not an integer"}, 400
 
-        # Construct the query
-        if not query_conditions:
-            return {"error": "No query parameters provided"}, 400
-        if len(query_conditions) == 1:
-            query += query_conditions[0]
-        if len(query_conditions) > 1:
-            for condition in query_conditions[:-1]:
-                query += condition + " AND "
-            query += query_conditions[-1]
+            if "author" in request.args:
+                query = query.filter(Bookdb.author == request.args["author"])
 
-        # Execute the query
-        conn = get_db_connection()
-        if conn is None:
-            return {"error": "Could not connect to database"}, 500
-        cursor = conn.cursor()
-        if cursor is None:
-            return {"error": "Could not get cursor from database connection"}, 500
-        try:
-            books = cursor.execute(query, tuple(args)).fetchall()
-        except:
-            return {"error": "Could not execute query to fetch book from database"}, 500
-        conn.close()
+            if "title" in request.args:
+                query = query.filter(Bookdb.title == request.args["title"])
+
+            if "year" in request.args:
+                year = request.args["year"]
+                if len(year) > 4:
+                    return {"error": "Year is too long"}, 400
+                if not is_integer(year):
+                    return {"error": "Year is not an integer"}, 400
+                query = query.filter(db.Book.year == year)
+
+            if "book_type" in request.args:
+                book_type = request.args["book_type"]
+                if book_type not in ["fiction", "non-fiction"]:
+                    return {"error": 'Type must be "fiction" or "non-fiction"'}, 400
+                query = query.filter(Bookdb.type.has(name=book_type))
+
+            result = query.all()
 
         # Return the result
-        if books is None:
+        if not result:
             return {"error": "No books found"}, 404
-        return {"books": books}, 200
+
+        return {"books": result}, 200
 
     @api.doc(description="Add multiple new books to the database.")
     @api.expect(book_model, validate=True)
@@ -308,41 +283,33 @@ class BookList(Resource):
     def post(self):
         # Parse the JSON body of the request
         try:
-            book_data = request.get_json()
+            books_data = request.get_json()
         except:
             return {"error": "Invalid JSON format"}, 400
 
         # Validate and insert each book
         inserted_books = []
         errors = []
-        conn = get_db_connection()
-        if conn is None:
-            return {"error": "Could not connect to database"}, 500
-        cursor = conn.cursor()
-        if cursor is None:
-            return {"error": "Could not get cursor from database connection"}, 500
 
-        for book in book_data:
-            if all(key in book for key in ["id", "title", "author", "type", "year"]):
+        for book_data in books_data["books"]:
+            if all(key in book_data for key in ["title", "author", "type", "year"]):
                 try:
-                    cursor.execute(
-                        "INSERT INTO books (id, title, author, book_type, year) VALUES (?, ?, ?, ?, ?)",
-                        (
-                            book["id"],
-                            book["title"],
-                            book["author"],
-                            book["type"],
-                            book["year"],
-                        ),
+                    booktype = BookTypedb.query.filter_by(name=book_data["type"]).first()
+                    book = Bookdb(
+                        title=book_data["title"],
+                        author=book_data["author"],
+                        type_id=booktype.id,
+                        year=book_data["year"]
                     )
-                    inserted_books.append(book)
-                except sqlite3.Error as e:
-                    errors.append({"book": book, "error": str(e)})
+                    db.session.add(book)
+                except Exception as e:
+                    api.logger.error(f'Failed to insert a book! {e}')
+                    errors.append({"book": book})
+
             else:
                 errors.append({"book": book, "error": "Missing required fields"})
 
-        conn.commit()
-        conn.close()
+        db.session.commit()
 
         # Return the result
         if errors:
