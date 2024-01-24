@@ -7,7 +7,6 @@ from sqlalchemy import Integer, String, Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
-
 class BookType(db.Model):
     __tablename__ = "booktypes"
 
