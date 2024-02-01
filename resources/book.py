@@ -16,24 +16,12 @@ book_model = api.model(
     },
 )
 
-parser = reqparse.RequestParser()
-parser.add_argument("id", type=int, required=True, help="ID cannot be blank and must be an integer.")
-parser.add_argument("title", required=False, help="Title cannot be blank.")
-parser.add_argument("author", required=False, help="Author cannot be blank.")
-parser.add_argument("type", required=False, help="Type must be either 'fiction' or 'non-fiction'.")
-parser.add_argument(
-    "year",
-    type=int,
-    required=False,
-    help="Year cannot be blank and must be an integer lesser than 10000.",
-)
-
+#TODO get fix
 class Book(Resource):
     @api.doc(
         description="Retrieve a book based on query parameters. Can filter by id, author, title, year, and book_type."
     )
     @api.marshal_with(book_model)
-    @api.expect(parser)
     @api.response(200, "Success")
     @api.response(400, "Validation Error")
     @api.response(404, "Book not found")
@@ -187,7 +175,6 @@ class Book(Resource):
         return {"message": "Disabled for security reasons."}, 405
 
     @api.doc(description="Delete a book based on its ID.")
-    @api.expect(parser)
     @api.response(200, "Book Deleted")
     @api.response(400, "Validation Error")
     @api.response(404, "Book not found")
