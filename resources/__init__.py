@@ -9,12 +9,12 @@ from models import BookList as BookListdb
 api = Namespace("books", description="Book related operations")
 
 from .book import Book
-api.add_resource(Book, "/books")
+api.add_resource(Book, "/books/<int:book_id>")
 
 from .booklist import BookList
 from .bookcollection import BookCollection
 
 
-api.add_resource(BookList, "/booklists")
+api.add_resource(BookList, "/books")
 api.add_resource(BookCollection, "/collections")
 
