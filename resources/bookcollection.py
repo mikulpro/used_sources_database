@@ -1,5 +1,5 @@
 from flask_restx import Resource, fields, reqparse
-from .resources import api
+from . import api
 
 
 # Define the book collection model
