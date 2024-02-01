@@ -1,7 +1,9 @@
 from flask_restx import Resource, fields, reqparse
 from . import api
+from flask import request
+from models import db, Book as Bookdb, BookType as BookTypedb
 
-# Define individual book model
+# defining book_model again cuz i am retarded so this is TODO
 book_model = api.model(
     "Book",
     {
@@ -12,65 +14,90 @@ book_model = api.model(
         "year": fields.Integer,
     },
 )
+
 # Define list of books model
 book_list_model = api.model(
     "BookList", {"books": fields.List(fields.Nested(book_model))}
+)
+
+parser = reqparse.RequestParser()
+parser.add_argument('page', type=int, default=1, help='Page number')
+parser.add_argument('per_page', type=int, default=10, help='Books per page')
+parser.add_argument("title", required=False, help="Search by title")
+parser.add_argument("author", required=False, help="search by Author.")
+parser.add_argument("type", required=False, help="Search by type, only 'fiction' or 'non-fiction' exists.")
+parser.add_argument(
+    "year",
+    type=int,
+    required=False,
+    help="Year cannot be blank and must be an integer lesser than 10000.",
 )
 
 class BookList(Resource):
     @api.doc(
         description="Retrieve a list of books based on query parameters. Can filter by id, author, title, year, and type."
     )
-    @api.marshal_with(book_list_model)
+    @api.expect(parser)
     @api.response(200, "Success")
     @api.response(400, "Validation Error")
     @api.response(404, "No Books Found")
     @api.response(500, "Internal Server Error")
-    def get(self, book_id=None):
-        if book_id:
-            result = Bookdb.query.get(book_id)
-        else:
-            # Start with a base query
-            query = db.session.query(Bookdb)
+    def get(self):
+        # Add other filters as needed
+        args = parser.parse_args()
 
-            # Check query parameters
-            if "id" in request.args:
-                id = request.args["id"]
-                if is_integer(id):
-                    query = query.filter(Bookdb.id == id)
-                else:
-                    return {"error": "Book id is not an integer"}, 400
+        # Base query
+        query = Bookdb.query
 
-            if "author" in request.args:
+        if "author" in request.args:
                 query = query.filter(Bookdb.author == request.args["author"])
 
-            if "title" in request.args:
-                query = query.filter(Bookdb.title == request.args["title"])
+        if "title" in request.args:
+            query = query.filter(Bookdb.title == request.args["title"])
 
-            if "year" in request.args:
-                year = request.args["year"]
-                if len(year) > 4:
-                    return {"error": "Year is too long"}, 400
-                if not is_integer(year):
-                    return {"error": "Year is not an integer"}, 400
-                query = query.filter(db.Book.year == year)
+        if "year" in request.args:
+            year = request.args["year"]
+            if len(year) > 4:
+                return {"error": "Year is too long"}, 400
+            if not is_integer(year):
+                return {"error": "Year is not an integer"}, 400
+            query = query.filter(db.Book.year == year)
 
-            if "book_type" in request.args:
-                book_type = request.args["book_type"]
-                if book_type not in ["fiction", "non-fiction"]:
-                    return {"error": 'Type must be "fiction" or "non-fiction"'}, 400
-                query = query.filter(Bookdb.type.has(name=book_type))
+        if "book_type" in request.args:
+            book_type = request.args["book_type"]
+            if book_type not in ["fiction", "non-fiction"]:
+                return {"error": 'Type must be "fiction" or "non-fiction"'}, 400
+            query = query.filter(Bookdb.type.has(name=book_type))
 
-            result = query.all()
+        # Pagination
+        page = args['page']
+        per_page = args['per_page']
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        books = pagination.items
 
-        # Return the result
-        if not result:
+        # Serialize books
+        # TODO there has to be better way to do this right?
+        serialized_books = [{
+            'id': book.id,
+            'title': book.title,
+            'author': book.author,
+            'type': book.type.name if book.type else None,  # Assuming 'type' is a related object
+            'year': book.year
+        } for book in books]
+
+        # Return results
+        if not serialized_books:
             return {"error": "No books found"}, 404
 
-        return {"books": result}, 200
+        return {
+            "books": serialized_books,
+            "total": pagination.total,
+            "pages": pagination.pages,
+            "page": page
+        }, 200
 
     @api.doc(description="Add multiple new books to the database.")
-    @api.expect(book_model, validate=True)
+    @api.expect(book_list_model, validate=True)
     @api.response(201, "Books Created")
     @api.response(207, "Partial Success with Errors")
     @api.response(400, "Validation Error")
