@@ -3,7 +3,7 @@ from flask import Flask
 from flask_restx import Api
 
 from models import db
-from resources import api as books_api
+from resources.resources import api as books_api
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///books.db"
