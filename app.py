@@ -1,4 +1,7 @@
 # app.py
+from flask import Flask
+from flask_restx import Api
+
 from models import db
 from resources import api as books_api
 
