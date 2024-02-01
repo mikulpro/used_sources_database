@@ -17,14 +17,10 @@ book_model = api.model(
 )
 
 parser = reqparse.RequestParser()
-parser.add_argument(
-    "id", type=int, required=True, help="ID cannot be blank and must be an integer."
-)
+parser.add_argument("id", type=int, required=True, help="ID cannot be blank and must be an integer.")
 parser.add_argument("title", required=False, help="Title cannot be blank.")
 parser.add_argument("author", required=False, help="Author cannot be blank.")
-parser.add_argument(
-    "type", required=False, help="Type must be either 'fiction' or 'non-fiction'."
-)
+parser.add_argument("type", required=False, help="Type must be either 'fiction' or 'non-fiction'.")
 parser.add_argument(
     "year",
     type=int,
