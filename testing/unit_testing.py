@@ -1,7 +1,7 @@
 import unittest
 
 from app import app
-from utils import utils
+from utils.utils import is_integer
 
 
 class TestUtils(unittest.TestCase):
