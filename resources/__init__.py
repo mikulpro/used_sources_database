@@ -16,5 +16,5 @@ from .bookcollection import BookCollection
 
 
 api.add_resource(BookList, "/books")
-api.add_resource(BookCollection, "/collections")
+api.add_resource(BookCollection, "/collections<int:id>")
 
