@@ -1,8 +1,5 @@
 # app.py
-from flask import Flask
-from flask_restx import Api
-
-from db_init import db
+from models import db
 from resources import api as books_api
 
 app = Flask(__name__)
