@@ -1,0 +1,29 @@
+#### GET ####
+/books
+/books/<int:id>
+/books?params
+
+/booklist
+
+/bookcollections
+/bookcollections/<int:id>
+/bookcollections?params
+
+
+
+#### POST ####
+/books
+
+/booklist
+
+/bookcollections
+/bookcollections/<int:id>/books
+
+#### PUT ####
+/books/<int:id>
+/bookcollections/<int:id>
+
+
+#### DELETE ####
+/books/<int:id>
+/bookcollections/<int:id>
