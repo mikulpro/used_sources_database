@@ -6,7 +6,7 @@ from utils import get_db_connection, is_integer
 from models import db
 from models import Book as Bookdb
 from models import BookType as BookTypedb
-from models import BookList as BookListdb
+from models import BookCollection as BookCollectiondb
 
 
 api = Namespace("books", description="Book related operations")
