@@ -3,24 +3,27 @@
 /books/<int:id>
 /books?params
 
+/booklist
 
-/booklists
-/booklists/<int:id>
-/booklists?params
+/bookcollections
+/bookcollections/<int:id>
+/bookcollections?params
 
 
 
 #### POST ####
 /books
-/booklists
-/booklists/<int:id>/books
 
+/booklist
+
+/bookcollections
+/bookcollections/<int:id>/books
 
 #### PUT ####
 /books/<int:id>
-/booklists/<int:id>
+/bookcollections/<int:id>
 
 
 #### DELETE ####
 /books/<int:id>
-/booklists/<int:id>
+/bookcollections/<int:id>
