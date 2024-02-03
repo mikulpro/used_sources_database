@@ -2,6 +2,6 @@
     "id" : 1,
     "author" : "Edited",
     "title" : "Edited Book",
-    "year" : "1999",
+    "year" : 1999,
     "type" : "non-fiction"
 }

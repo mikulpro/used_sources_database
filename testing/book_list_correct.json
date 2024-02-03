@@ -1,0 +1,23 @@
+[
+    { 
+    "id" : 91,
+    "author" : "Kim",
+    "title" : "Post 1",
+    "year" : 2019,
+    "type" : "fiction"
+    },
+    { 
+    "id" : 92,
+    "author" : "Luke",
+    "title" : "How to skywalk",
+    "year" : 3000,
+    "type" : "non-fiction"
+    },
+    { 
+    "id" : 93,
+    "author" : "Jane Ostin",
+    "title" : "Pride and Prejudice",
+    "year" : 1813,
+    "type" : "fiction"
+    }
+]
