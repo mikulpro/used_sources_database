@@ -124,6 +124,7 @@ class Book(Resource):
         if len(str(data["year"])) > 4:
             return {"error": "Year is too long"}, 400
 
+        inserted_id = None
         try:
             booktype = BookTypedb.query.filter_by(name=data["type"]).first()
             book = Bookdb(
@@ -134,10 +135,12 @@ class Book(Resource):
             )
             db.session.add(book)
             db.session.commit()
+            inserted_id = book.id
         except Exception as e:
             api.logger.error(f'Failed to insert a book! {e}')
             return {"error": "Book wasn't inserted"}, 500
-        return {"message": "New book inserted successfully"}, 201
+        return {"message": "New book inserted successfully",
+                "id" : inserted_id}, 201
 
     @api.doc(description="Update an existing book.")
     @api.expect(book_model, validate=True)
