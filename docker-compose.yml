@@ -25,6 +25,7 @@ services:
       MYSQL_PASSWORD: mysql1234
     ports:
       - "8095:8095"
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
 

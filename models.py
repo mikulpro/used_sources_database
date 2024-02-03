@@ -1,16 +1,21 @@
 from __future__ import annotations
-
-from sqlalchemy import Column, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import List
 
 from db_init import db
 
-# class Book(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     title = db.Column(db.String, nullable=False)
-#     author = db.Column(db.String, nullable=False)
-#     type = db.Column(db.String, nullable=False)
-#     year = db.Column(db.Integer, nullable=False)
+from sqlalchemy import Integer, String, Column, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+
+class BookType(db.Model):
+    __tablename__ = "booktypes"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(nullable=False)
+    books: Mapped[List["Book"]] = relationship(back_populates="type")
+
+    def __str__(self):
+        return self.name
 
 
 class Book(db.Model):
@@ -18,21 +23,24 @@ class Book(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     title: Mapped[str] = mapped_column(nullable=False)
-    username: Mapped[str] = mapped_column(nullable=False)
-    username: Mapped[str] = mapped_column(nullable=False)
+    author: Mapped[str] = mapped_column(nullable=False)
+    type_id: Mapped[int] = mapped_column(ForeignKey("booktypes.id"))
+    type: Mapped["BookType"] = relationship(back_populates="books")
     year: Mapped[int] = mapped_column(nullable=False)
 
 
-booklist_book_table = db.Table(
-    "booklist_book",
+bookcollection_book_table = db.Table(
+    "bookcollection_book",
     db.metadata,
-    Column("booklist_id", ForeignKey("booklists.id"), primary_key=True),
-    Column("book_id", ForeignKey("books.id"), primary_key=True),
+    Column("booklist_id", ForeignKey("bookcollections.id"), primary_key=True),
+    Column("book_id", ForeignKey("books.id"), primary_key=True)
 )
 
 
-class BookList(db.Model):
-    __tablename__ = "booklists"
+class BookCollection(db.Model):
+    __tablename__ = "bookcollections"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    books: Mapped[list[Book]] = relationship(secondary=booklist_book_table)
+    name: Mapped[str] = mapped_column()
+    description: Mapped[str] = mapped_column()
+    books: Mapped[list["Book"]] = relationship(secondary=bookcollection_book_table)
