@@ -1,6 +1,6 @@
 # app.py
 from models import db
-from resources import api as books_api
+from resources.resources import api as books_api
 from models import Book, BookCollection
 
 from flask import Flask

@@ -1,5 +1,5 @@
 from flask_restx import Resource, fields, reqparse
-from . import api
+from .resources import api
 from flask import request
 from models import db, Book as Bookdb, BookType as BookTypedb
 
