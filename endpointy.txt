@@ -16,6 +16,10 @@
 /collections<int:id>
     class bookcollection
 
+/booklist
+
+/bookcollections
+/bookcollections/<int:id>/books
 
 #### PUT ####
 
