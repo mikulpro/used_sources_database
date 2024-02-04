@@ -74,7 +74,8 @@ class Book(Resource):
     @api.response(201, "Book Created")
     @api.response(400, "Validation Error")
     @api.response(500, "Internal Server Error")
-    def post(self, booklist_id=None):
+    def post(self):
+
         # Get the JSON data from the request
         data = request.json
         if data is None:
@@ -95,6 +96,7 @@ class Book(Resource):
         if len(str(data["year"])) > 4:
             return {"error": "Year is too long"}, 400
 
+        inserted_id = None
         try:
             booktype = BookTypedb.query.filter_by(name=data["type"]).first()
             book = Bookdb(
@@ -103,17 +105,14 @@ class Book(Resource):
                 type_id=booktype.id,
                 year=data["year"]
             )
-            if booklist_id:
-                booklist = BookListdb.query.get(booklist_id)
-                if not booklist:
-                    return {"error": f"Booklist with id {booklist_id} does not exist"}, 404
-                booklist.books.append(book)
             db.session.add(book)
             db.session.commit()
+            inserted_id = book.id
         except Exception as e:
             api.logger.error(f'Failed to insert a book! {e}')
             return {"error": "Book wasn't inserted"}, 500
-        return {"message": "New book inserted successfully"}, 201
+        return {"message": "New book inserted successfully",
+                "id" : inserted_id}, 201
 
     @api.doc(description="Update an existing book.")
     @api.expect(book_model, validate=True)
@@ -190,3 +189,4 @@ class Book(Resource):
         except Exception as e:
             api.logger.error(f'Failed to delete book with id {book_id}! {e}')
             return {"error": "Book wasn't deleted"}, 500
+            

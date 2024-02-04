@@ -4,7 +4,7 @@ from flask_restx import Namespace
 from models import db
 from models import Book as Bookdb
 from models import BookType as BookTypedb
-from models import BookList as BookListdb
+from models import BookCollection
 
 api = Namespace("books", description="Book related operations")
 
