@@ -21,7 +21,7 @@ class BookApiTest(unittest.TestCase):
         self.app.testing = True
 
     def test_get_book_not_found(self):
-        response = self.app.get("/books/99999")
+        response = self.app.get("/books/books/99999")
         self.assertEqual(response.status_code, 404)
 
     def test_post_book(self):
