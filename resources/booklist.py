@@ -33,6 +33,7 @@ parser.add_argument(
     help="Year cannot be blank and must be an integer lesser than 10000.",
 )
 
+
 class BookList(Resource):
     @api.doc(
         description="Retrieve a list of books based on query parameters. Can filter by id, author, title, year, and type."
@@ -159,4 +160,3 @@ class BookList(Resource):
                 "header4": "year",
             }
         }, 200
-

@@ -71,6 +71,7 @@ class Book(Resource):
 
     @api.doc(description="Add a new book to the database.")
     @api.expect(book_model, validate=True)
+    @api.marshal_with(book_model)
     @api.response(201, "Book Created")
     @api.response(400, "Validation Error")
     @api.response(500, "Internal Server Error")
@@ -110,11 +111,11 @@ class Book(Resource):
         except Exception as e:
             api.logger.error(f'Failed to insert a book! {e}')
             return {"error": "Book wasn't inserted"}, 500
-        return {"message": "New book inserted successfully",
-                "id" : inserted_id}, 201
+        return book, 201
 
     @api.doc(description="Update an existing book.")
     @api.expect(book_model, validate=True)
+    @api.marshal_with(book_model)
     @api.response(200, "Book Updated")
     @api.response(400, "Validation Error")
     @api.response(404, "Book not found")
@@ -154,7 +155,7 @@ class Book(Resource):
             book.type_id = booktype.id
             db.session.commit()
             put_id = book.id
-            return {"message": f"Book with id {book_id} modified successfully"}, 200
+            return book, 200
         except Exception as e:
             api.logger.error(f'Failed to modify book with id {book_id}! {e}')
             return {"error": "Book wasn't modified",
