@@ -119,7 +119,6 @@ class BookList(Resource):
         if len(str(data["year"])) > 4:
             return {"error": "Year is too long"}, 400
 
-        inserted_id = None
         try:
             booktype = db.session.query(BookTypedb).filter(BookTypedb.name == data["type"]).first()
             book = Bookdb(
