@@ -1,4 +1,4 @@
-from flask_restx import Resource, fields, reqparse
+from flask_restx import Resource, fields
 from flask import request
 from db.models import db, Book as Bookdb, BookType as BookTypedb
 from utils.utils import is_integer

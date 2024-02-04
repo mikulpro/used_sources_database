@@ -1,10 +1,6 @@
 # resources.py
 from flask_restx import Namespace
 
-from db.models import db
-from db.models import Book as Bookdb
-from db.models import BookType as BookTypedb
-from db.models import BookCollection
 
 api = Namespace("books", description="Book related operations")
 

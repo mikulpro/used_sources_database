@@ -1,7 +1,7 @@
 import unittest
 
 from app import app
-from utils.utils import get_db_connection, is_integer
+from utils.utils import is_integer
 
 
 class TestUtils(unittest.TestCase):

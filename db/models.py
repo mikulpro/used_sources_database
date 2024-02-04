@@ -3,7 +3,7 @@ from typing import List
 
 from .db_init import db
 
-from sqlalchemy import Integer, String, Column, ForeignKey
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 

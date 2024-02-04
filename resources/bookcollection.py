@@ -4,7 +4,6 @@ from db.models import db
 from db.models import BookCollection as BookCollectiondb
 from db.models import Book as Bookdb
 from .resources import api
-from sqlalchemy import select
 
 
 # Define the book collection model
