@@ -73,7 +73,7 @@ class BookApiTest(unittest.TestCase):
             "type": "fiction",
             "year": 2021
         }
-        response = self.app.put("/books/books/2", json=update_data)
+        response = self.app.put(f"/books/books/{post_response.json['id']}", json=update_data)
         self.assertEqual(response.status_code, 200)
         self.app.delete(f"/books/books/{post_response.json['id']}")
 
