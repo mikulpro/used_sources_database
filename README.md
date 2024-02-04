@@ -17,6 +17,8 @@ https://flask-restful.readthedocs.io/en/latest/quickstart.html
 
 ## Docker setup
 
+Docker pulls MySQL Database image to run books.db and packs it with our written REST API for POSTing, GETting, PUTting and DELTEing books.
+
 For docker use these two commands:
 
 ```shell
@@ -27,53 +29,46 @@ docker-compose build
 ```shell
 docker compose up
 ```
-...to run the docker. Do not use "docker run", there are some problems with it.
+...to run the docker. 
+
+```shell
+docker compose down
+```
+...to stop the docker. 
 
 ---------------------------------------------------------
 
-## Testing GET using curl
+## Testing
 
-To ensure everything is working correctly, try composing the docker image and then communicating with it using the following command:
+We have written unit tests in new_unit_testing.py, that can quickly ensure every CRUD method is working correctly.
+
+To run automatised testing first make sure your docker image is up and running, then you can run unit testing using the following command in separate terminal in used_sources_database directory:
+
 ```shell
-curl http://127.0.0.1:5000/
-```
-This should return the following content:
-```
-{ "hello": "world" }
-```
-
----------------------------------------------------------
-
-## Testing PUT using curl
-
-To ensure everything is working correctly, try composing the docker image and then communicating with it using the following command on Linux shell:
-```shell
-curl http://localhost:5000/todo1 -d "data=Remember the milk" -X PUT
-```
-Or on Windows Powershell this alternative:
-```shell
-Invoke-WebRequest -Uri http://localhost:5000/todo1 -Method PUT -Body "data=Remember the milk" -ContentType "application/x-www-form-urlencoded"
-```
-
-This should return the following content:
-```
-{ "todo1": "Remember the milk" }
-```
-
-The same content should be gotten by then calling the following command:
-```shell
-curl http://localhost:5000/todo1
+docker exec used_sources_database-app-1 python new_unit_testing.py
 ```
 
 ---------------------------------------------------------
 
-## Actual HTTP communication usage
+## HTTP communication
 
-To GET either book or booklist with specified parameter, simply write the parameter with corresponding value after question mark.
+Assuming you have the Docker image running on your local device and therfore can connect to it using your localhost IP address whith the default port which is usually 127.0.0.1:5000, HTTP communication with our API works like this...
 
-For example to GET book with ID number 1, request this:
-```shell
-curl http://localhost:5000/book?id=1
+To view Swagger documentation of all methods u can connect with your browser to:
+```url
+http://127.0.0.1:5000/swagger/
 ```
 
-To insert a new book or booklist to the database using POST method or to update an existing book or booklist in the database using the PUT method, you have to call a proper HTTP request with .json file containing all information that should be written to the database.
+All non-swagger communication is done via the route /books/.
+
+To POST a new book to the DB, create a .json file containing information for title, author, type and year and POST it using HTTP request to"
+```url
+http://127.0.0.1:5000/books/books
+```
+
+GETting a book from the DB can be done either by specifying the exact ID that shoud be pulled from the DB using:
+```url
+http://127.0.0.1:5000/books/books/<int:id>
+```
+
+...or by specifying one of the book's parameters, preferably the author.
