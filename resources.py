@@ -174,6 +174,7 @@ class Book(Resource):
         if not book:
             return {"error": f"Book with id {book_id} does not exist"}, 404
 
+        put_id = None
         try:
             book.title = data.get("title")
             book.author = data.get("author")
@@ -181,10 +182,12 @@ class Book(Resource):
             booktype = BookTypedb.query.filter_by(name=data.get("type")).first()
             book.type_id = booktype.id
             db.session.commit()
+            put_id = book.id
             return {"message": f"Book with id {book_id} modified successfully"}, 200
         except Exception as e:
             api.logger.error(f'Failed to modify book with id {book_id}! {e}')
-            return {"error": "Book wasn't modified"}, 500
+            return {"error": "Book wasn't modified",
+                    "id": put_id}, 500
 
     # not sure this is correct
     def head(self):
