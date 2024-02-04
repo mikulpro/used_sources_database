@@ -1,19 +1,26 @@
 from flask import request
-from flask_restx import Resource, fields
+from flask_restx import Resource, fields, reqparse
 from models import db, BookCollection, Book
 from .resources import api
+from sqlalchemy import select
 
 # Define the book collection model
 book_collection_model = api.model(
     "BookCollection",
     {
-        "name": fields.String(required=True, description="Collection name"),  # Add this line
+        "name": fields.String(required=True, description="Collection name"), 
         "description": fields.String(required=True, description="Collection description"),
         "book_ids": fields.List(fields.Integer, description="List of book IDs in the collection"),
     },
 )
 
-class BookCollectionCreate(Resource):
+collection_filter_parser = reqparse.RequestParser()
+collection_filter_parser.add_argument('name', type=str, help='Filter by collection name')
+collection_filter_parser.add_argument('description', type=str, help='Filter by collection description')
+collection_filter_parser.add_argument('page', type=int, default=1, help='Page number')
+collection_filter_parser.add_argument('per_page', type=int, choices=[10, 20, 50], default=10, help='Collections per page')
+
+class BookCollectionNonID(Resource):
     @api.doc(description="Create a new book collection.")
     @api.response(201, "Collection created successfully.")
     @api.response(400, "Validation Error")
@@ -37,8 +44,43 @@ class BookCollectionCreate(Resource):
             return {"message": "Collection created", "collection_id": collection.id}, 201
         except Exception as e:
             return {"error": str(e)}, 500
+
+
+    @api.doc(description="Search collections based on filters.")
+    @api.response(200, "Success")
+    @api.response(500, "Internal Server Error")
+    @api.expect(collection_filter_parser)
+    def get(self):
+        args = collection_filter_parser.parse_args()
+        page = args['page']
+        per_page = args['per_page']
+        base_query = BookCollection.query
+        
+        if args['name']:
+            base_query = base_query.filter(BookCollection.name.like(f"%{args['name']}%"))
+        if args['description']:
+            base_query = base_query.filter(BookCollection.description.like(f"%{args['description']}%"))
+        
+        # Apply pagination
+        pagination = base_query.paginate(page=page, per_page=per_page, error_out=False)
+        collections = pagination.items
+        
+        # Prepare data for response
+        data = {
+            "collections": [{
+                "id": collection.id,
+                "name": collection.name,
+                "description": collection.description,
+                "book_ids": [book.id for book in collection.books]
+            } for collection in collections],
+            "total": pagination.total,
+            "pages": pagination.pages,
+            "page": page
+        }
+
+        return data, 200
     
-class BookCollectionOperations(Resource):
+class BookCollectionID(Resource):
     @api.doc(description="Add books to an existing collection.")
     @api.response(200, "Books added successfully.")
     @api.response(400, "Validation Error")

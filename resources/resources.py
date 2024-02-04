@@ -12,13 +12,13 @@ from .book import Book
 api.add_resource(Book, "/books/<int:book_id>")
 
 from .booklist import BookList
-from .bookcollection import BookCollectionCreate, BookCollectionOperations
+from .bookcollection import BookCollectionNonID, BookCollectionID
 
 
 api.add_resource(BookList, "/books")
 
-api.add_resource(BookCollectionCreate, '/collections')
-api.add_resource(BookCollectionOperations, '/collections/<int:collection_id>')
+api.add_resource(BookCollectionNonID, '/collections')
+api.add_resource(BookCollectionID, '/collections/<int:collection_id>')
 
 
 
