@@ -87,9 +87,6 @@ class BookApiTest(unittest.TestCase):
         }
         post_response = self.app.post("/books/books", json=book_data)
 
-        with open("new_unit_testing_log.txt", "w") as f:
-            f.writelines(f"post_response: {post_response}")
-
         # Delete the book
         response = self.app.delete(f"/books/books/{post_response.json['id']}")
         self.assertEqual(response.status_code, 200)
