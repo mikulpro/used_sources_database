@@ -34,14 +34,6 @@ class BookApiTest(unittest.TestCase):
         }
         response = self.app.post("/books/books", json=book_data)
         self.assertEqual(response.status_code, 201)
-
-        # Cleanup: remove the inserted book
-        # conn = get_db_connection()
-        # cursor = conn.cursor()
-        # cursor.execute("DELETE FROM books WHERE id = ?", (1,))
-        # conn.commit()
-        # conn.close()
-
         self.app.delete(f"/books/books/{response.json['id']}")
 
     def test_get_book_by_author(self):
@@ -58,14 +50,6 @@ class BookApiTest(unittest.TestCase):
         response = self.app.get("/books/books?author=Mock Author")
         self.assertEqual(response.status_code, 200)
         self.assertIn("Mock Author", response.data.decode())
-
-        # Cleanup: remove the mock book
-        # conn = get_db_connection()
-        # cursor = conn.cursor()
-        # cursor.execute("DELETE FROM books WHERE id = ?", (4,))
-        # conn.commit()
-        # conn.close()
-
         self.app.delete(f"/books/books/{post_response.json['id']}")
 
     def test_get_book_invalid_year(self):
@@ -91,14 +75,6 @@ class BookApiTest(unittest.TestCase):
         }
         response = self.app.put("/books/books/2", json=update_data)
         self.assertEqual(response.status_code, 200)
-
-        # Cleanup: remove the book
-        # conn = get_db_connection()
-        # cursor = conn.cursor()
-        # cursor.execute("DELETE FROM books WHERE id = ?", (2,))
-        # conn.commit()
-        # conn.close()
-
         self.app.delete(f"/books/books/{post_response.json['id']}")
 
     def test_delete_book(self):
