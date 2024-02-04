@@ -76,26 +76,18 @@ class BookList(Resource):
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         books = pagination.items
 
-        # Serialize books
-        # TODO there has to be better way to do this right?
-        serialized_books = [{
-            'id': book.id,
-            'title': book.title,
-            'author': book.author,
-            'type': book.type.name if book.type else None,  # Assuming 'type' is a related object
-            'year': book.year
-        } for book in books]
-
-        # Return results
-        if not serialized_books:
+        if not books:
             return {"error": "No books found"}, 404
 
-        return {
-            "books": serialized_books,
+        # Use the api.marshal to serialize the list of books
+        data = {
+            "books": books,
             "total": pagination.total,
             "pages": pagination.pages,
             "page": page
-        }, 200
+        }
+
+        return api.marshal(data, book_list_model), 200
 
     @api.doc(description="Add multiple new books to the database.")
     @api.expect(book_list_model, validate=True)
