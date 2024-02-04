@@ -1,7 +1,9 @@
 from flask_restx import Resource, fields, reqparse
 from .resources import api
 from flask import request
-from models import db, Book as Bookdb, BookType as BookTypedb
+from models import db
+from models import Book as Bookdb
+from models import BookType as BookTypedb
 from utils.utils import is_integer
 
 # defining book_model again cuz i am retarded so this is TODO

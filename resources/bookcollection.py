@@ -1,6 +1,8 @@
 from flask import request
 from flask_restx import Resource, fields, reqparse
-from models import db, BookCollection, Book
+from models import db
+from models import BookCollection as BookCollectiondb
+from models import Book as Bookdb
 from .resources import api
 from sqlalchemy import select
 
@@ -34,9 +36,9 @@ class BookCollectionNonID(Resource):
             return {"error": "Name and description are required"}, 400
         
         try:
-            collection = BookCollection(name=data['name'], description=data['description'])
+            collection = BookCollectiondb(name=data['name'], description=data['description'])
             if 'book_ids' in data:
-                books = Book.query.filter(Book.id.in_(data['book_ids'])).all()
+                books = Bookdb.query.filter(Bookdb.id.in_(data['book_ids'])).all()
                 if len(books) != len(data['book_ids']):
                     return {"error": "One or more book IDs are invalid"}, 400
                 collection.books = books
@@ -56,12 +58,12 @@ class BookCollectionNonID(Resource):
         args = collection_filter_parser.parse_args()
         page = args['page']
         per_page = args['per_page']
-        base_query = BookCollection.query
+        base_query = BookCollectiondb.query
         
         if args['name']:
-            base_query = base_query.filter(BookCollection.name.like(f"%{args['name']}%"))
+            base_query = base_query.filter(BookCollectiondb.name.like(f"%{args['name']}%"))
         if args['description']:
-            base_query = base_query.filter(BookCollection.description.like(f"%{args['description']}%"))
+            base_query = base_query.filter(BookCollectiondb.description.like(f"%{args['description']}%"))
         
         # Apply pagination
         pagination = base_query.paginate(page=page, per_page=per_page, error_out=False)
@@ -92,7 +94,7 @@ class BookCollectionID(Resource):
     @api.expect(book_collection_model, validate=True)
     def put(self, collection_id):
         data = request.json
-        collection = db.session.query(BookCollection).filter(BookCollection.id == collection_id).first()
+        collection = db.session.query(BookCollectiondb).filter(BookCollectiondb.id == collection_id).first()
         if not collection:
             return {"error": f"Collection with id {collection_id} not found"}, 404
         
@@ -101,7 +103,7 @@ class BookCollectionID(Resource):
             collection.description = data.get('description', collection.description)
             
             if 'book_ids' in data:
-                books = Book.query.filter(Book.id.in_(data['book_ids'])).all()
+                books = Bookdb.query.filter(Bookdb.id.in_(data['book_ids'])).all()
                 if len(books) != len(data['book_ids']):
                     return {"error": "One or more book IDs are invalid"}, 400
                 collection.books = books
@@ -117,7 +119,7 @@ class BookCollectionID(Resource):
     @api.response(404, "Collection not found")
     @api.response(500, "Internal Server Error")
     def get(self, collection_id):
-        collection = db.session.query(BookCollection).filter(BookCollection.id == collection_id).first()
+        collection = db.session.query(BookCollectiondb).filter(BookCollectiondb.id == collection_id).first()
         if not collection:
             return {"error": "Collection not found"}, 404
         
@@ -137,7 +139,7 @@ class BookCollectionID(Resource):
     @api.response(404, "Collection not found")
     @api.response(500, "Internal Server Error")
     def delete(self, collection_id):
-        collection = db.session.query(BookCollection).filter(BookCollection.id == collection_id).first()
+        collection = db.session.query(BookCollectiondb).filter(BookCollectiondb.id == collection_id).first()
         if not collection:
             return {"error": f"Collection with id {collection_id} not found"}, 404
         try:
