@@ -75,7 +75,6 @@ class Book(Resource):
     @api.response(400, "Validation Error")
     @api.response(500, "Internal Server Error")
     def post(self):
-
         # Get the JSON data from the request
         data = request.json
         if data is None:
@@ -192,4 +191,3 @@ class Book(Resource):
         except Exception as e:
             api.logger.error(f'Failed to delete book with id {book_id}! {e}')
             return {"error": "Book wasn't deleted"}, 500
-            

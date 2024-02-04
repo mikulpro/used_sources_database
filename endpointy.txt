@@ -1,20 +1,18 @@
 #### GET ####
-
+/books
 /books/<int:id>
-    class book
 /books?params
-    class booklist
-/collections<int:id>
-    class bookcollection
+
+/booklist
+
+/bookcollections
+/bookcollections/<int:id>
+/bookcollections?params
+
+
 
 #### POST ####
-
-/books/<int:id>
-    class book
-/books?params
-    class booklist
-/collections<int:id>
-    class bookcollection
+/books
 
 /booklist
 
@@ -22,19 +20,10 @@
 /bookcollections/<int:id>/books
 
 #### PUT ####
-
 /books/<int:id>
-
-/collections<int:id>
+/bookcollections/<int:id>
 
 
 #### DELETE ####
-
 /books/<int:id>
-
-/collections<int:id>
-
-TODO:
-collections implementation
-book GET
-Testing fix
+/bookcollections/<int:id>
