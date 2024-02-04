@@ -1,10 +1,11 @@
 from __future__ import annotations
 from typing import List
 
-from sqlalchemy import Column, ForeignKey
+from db_init import db
+
+from sqlalchemy import Integer, String, Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from db_init import db
 
 class BookType(db.Model):
     __tablename__ = "booktypes"
@@ -28,17 +29,18 @@ class Book(db.Model):
     year: Mapped[int] = mapped_column(nullable=False)
 
 
-booklist_book_table = db.Table(
-    "booklist_book",
+bookcollection_book_table = db.Table(
+    "bookcollection_book",
     db.metadata,
-    Column("booklist_id", ForeignKey("booklists.id"), primary_key=True),
-    Column("book_id", ForeignKey("books.id"), primary_key=True),
+    Column("booklist_id", ForeignKey("bookcollections.id"), primary_key=True),
+    Column("book_id", ForeignKey("books.id"), primary_key=True)
 )
 
 
-class BookList(db.Model):
-    __tablename__ = "booklists"
+class BookCollection(db.Model):
+    __tablename__ = "bookcollections"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
-    books: Mapped[list["Book"]] = relationship(secondary=booklist_book_table)
+    description: Mapped[str] = mapped_column()
+    books: Mapped[list["Book"]] = relationship(secondary=bookcollection_book_table)

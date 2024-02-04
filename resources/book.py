@@ -74,7 +74,7 @@ class Book(Resource):
     @api.response(201, "Book Created")
     @api.response(400, "Validation Error")
     @api.response(500, "Internal Server Error")
-    def post(self, booklist_id=None):
+    def post(self):
         # Get the JSON data from the request
         data = request.json
         if data is None:
@@ -103,11 +103,6 @@ class Book(Resource):
                 type_id=booktype.id,
                 year=data["year"]
             )
-            if booklist_id:
-                booklist = BookListdb.query.get(booklist_id)
-                if not booklist:
-                    return {"error": f"Booklist with id {booklist_id} does not exist"}, 404
-                booklist.books.append(book)
             db.session.add(book)
             db.session.commit()
         except Exception as e:
