@@ -1,7 +1,7 @@
 # app.py
-from models import db
+from db.models import db
 from resources.resources import api as books_api
-from models import Book, BookCollection
+from db.models import Book, BookCollection
 
 from flask import Flask
 from flask_restx import Api, reqparse, Resource

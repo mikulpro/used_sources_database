@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List
 
-from db_init import db
+from .db_init import db
 
 from sqlalchemy import Integer, String, Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship

@@ -1,8 +1,8 @@
 from flask import request
 from flask_restx import Resource, fields, reqparse
-from models import db
-from models import BookCollection as BookCollectiondb
-from models import Book as Bookdb
+from db.models import db
+from db.models import BookCollection as BookCollectiondb
+from db.models import Book as Bookdb
 from .resources import api
 from sqlalchemy import select
 

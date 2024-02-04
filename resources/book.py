@@ -1,6 +1,6 @@
 from flask_restx import Resource, fields, reqparse
 from flask import request
-from models import db, Book as Bookdb, BookType as BookTypedb
+from db.models import db, Book as Bookdb, BookType as BookTypedb
 from utils.utils import is_integer
 from .resources import api
 
