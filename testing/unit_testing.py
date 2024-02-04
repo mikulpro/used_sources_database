@@ -1,7 +1,7 @@
 import unittest
 
 from app import app
-from utils import get_db_connection, is_integer
+from utils.utils import get_db_connection, is_integer
 
 
 class TestUtils(unittest.TestCase):
@@ -126,4 +126,4 @@ class BookApiTest(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
     # launched by
-    # docker exec used_sources_database-app-1 python new_unit_testing.py
+    # docker exec used_sources_database-app-1 python -m testing.unit_testing
