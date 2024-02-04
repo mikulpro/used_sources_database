@@ -1,15 +1,17 @@
 # app.py
 from db.models import db
 from resources.resources import api as books_api
-from db.models import Book, BookCollection
+from db.models import Book, BookCollection, BookType
 
 from flask import Flask
 from flask_restx import Api, reqparse, Resource
 
 import logging
+import os
+
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///books.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite://books.db")
 db.init_app(app)
 api = Api(app, doc='/swagger/')
 api.add_namespace(books_api, path='/books')
@@ -30,4 +32,8 @@ parser.add_argument('year', type=int, required=True, help="Year cannot be blank 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
-    app.run(debug=True, host="0.0.0.0", port=5000)
+        if len(db.session.query(BookType).all()) == 0:
+            db.session.add(BookType(name="fiction"))
+            db.session.add(BookType(name="non-fiction"))
+            db.session.commit()
+    app.run(debug=os.getenv("FLASK_DEBUG"), host="0.0.0.0", port=5000)

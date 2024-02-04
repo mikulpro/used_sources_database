@@ -4,12 +4,23 @@ services:
   app:
     build: .
     command: python app.py
-    environment:
-      - MYSQL_HOST=127.0.0.1:8095
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=mysql1234
-      - MYSQL_DB=db1234
     ports:
       - "5000:5000"
     volumes:
       - .:/usr/src/app
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=usoap
+      - POSTGRES_PASSWORD=Heslo123
+      - POSTGRES_DB=used_sources_database
+
+volumes:
+  postgres_data:

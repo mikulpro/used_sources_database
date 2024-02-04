@@ -22,7 +22,7 @@ collection_filter_parser.add_argument('name', type=str, help='Filter by collecti
 collection_filter_parser.add_argument('description', type=str, help='Filter by collection description')
 collection_filter_parser.add_argument('page', type=int, default=1, help='Page number')
 collection_filter_parser.add_argument('per_page', type=int, choices=[10, 20, 50],
-                                        default=10, help='Collections per page')
+                                      default=10, help='Collections per page')
 
 
 class BookCollectionNonID(Resource):
