@@ -21,7 +21,8 @@ collection_filter_parser = reqparse.RequestParser()
 collection_filter_parser.add_argument('name', type=str, help='Filter by collection name')
 collection_filter_parser.add_argument('description', type=str, help='Filter by collection description')
 collection_filter_parser.add_argument('page', type=int, default=1, help='Page number')
-collection_filter_parser.add_argument('per_page', type=int, choices=[10, 20, 50], default=10, help='Collections per page')
+collection_filter_parser.add_argument('per_page', type=int, choices=[10, 20, 50],
+                                        default=10, help='Collections per page')
 
 
 class BookCollectionNonID(Resource):
@@ -38,7 +39,7 @@ class BookCollectionNonID(Resource):
         try:
             collection = BookCollectiondb(name=data['name'], description=data['description'])
             if 'book_ids' in data:
-                books = Bookdb.query.filter(Bookdb.id.in_(data['book_ids'])).all()
+                books = db.session.query(BookCollectiondb).filter(Bookdb.id.in_(data['book_ids'])).all()
                 if len(books) != len(data['book_ids']):
                     return {"error": "One or more book IDs are invalid"}, 400
                 collection.books = books
@@ -58,7 +59,7 @@ class BookCollectionNonID(Resource):
         args = collection_filter_parser.parse_args()
         page = args['page']
         per_page = args['per_page']
-        base_query = BookCollectiondb.query
+        base_query = db.session.query(BookCollectiondb)
         
         if args['name']:
             base_query = base_query.filter(BookCollectiondb.name.like(f"%{args['name']}%"))
@@ -103,7 +104,7 @@ class BookCollectionID(Resource):
             collection.description = data.get('description', collection.description)
             
             if 'book_ids' in data:
-                books = Bookdb.query.filter(Bookdb.id.in_(data['book_ids'])).all()
+                books = db.session.query(BookCollectiondb).filter(Bookdb.id.in_(data['book_ids'])).all()
                 if len(books) != len(data['book_ids']):
                     return {"error": "One or more book IDs are invalid"}, 400
                 collection.books = books
