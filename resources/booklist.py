@@ -49,7 +49,7 @@ class BookList(Resource):
         args = parser.parse_args()
 
         # Base query
-        query = Bookdb.query
+        query = db.session.query(Bookdb)
 
         if "author" in request.args:
                 query = query.filter(Bookdb.author == request.args["author"])
@@ -119,7 +119,7 @@ class BookList(Resource):
 
         inserted_id = None
         try:
-            booktype = BookTypedb.query.filter_by(name=data["type"]).first()
+            booktype = db.session.query(BookTypedb).filter(BookTypedb.name == data["type"]).first()
             book = Bookdb(
                 title=data["title"],
                 author=data["author"],
@@ -128,7 +128,6 @@ class BookList(Resource):
             )
             db.session.add(book)
             db.session.commit()
-            inserted_id = book.id
         except Exception as e:
             api.logger.error(f'Failed to insert a book! {e}')
             return {"error": "Book wasn't inserted"}, 500

@@ -92,7 +92,7 @@ class BookCollectionID(Resource):
     @api.expect(book_collection_model, validate=True)
     def put(self, collection_id):
         data = request.json
-        collection = BookCollection.query.get(collection_id)
+        collection = db.session.query(BookCollection).filter(BookCollection.id == collection_id).first()
         if not collection:
             return {"error": f"Collection with id {collection_id} not found"}, 404
         
@@ -117,7 +117,7 @@ class BookCollectionID(Resource):
     @api.response(404, "Collection not found")
     @api.response(500, "Internal Server Error")
     def get(self, collection_id):
-        collection = BookCollection.query.get(collection_id)
+        collection = db.session.query(BookCollection).filter(BookCollection.id == collection_id).first()
         if not collection:
             return {"error": "Collection not found"}, 404
         
@@ -137,7 +137,7 @@ class BookCollectionID(Resource):
     @api.response(404, "Collection not found")
     @api.response(500, "Internal Server Error")
     def delete(self, collection_id):
-        collection = BookCollection.query.get(collection_id)
+        collection = db.session.query(BookCollection).filter(BookCollection.id == collection_id).first()
         if not collection:
             return {"error": f"Collection with id {collection_id} not found"}, 404
         try:

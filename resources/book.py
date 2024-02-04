@@ -28,7 +28,7 @@ class Book(Resource):
     @api.response(500, "Internal Server Error")
     def get(self, book_id=None):
         if book_id:
-            result = Bookdb.query.get(book_id)
+            result = db.session.query(Bookdb).filter(Bookdb.id == book_id).first()
         else:
             # Start with a base query
             query = db.session.query(Bookdb)
@@ -98,7 +98,7 @@ class Book(Resource):
         if len(str(data["year"])) > 4:
             return {"error": "Year is too long"}, 400
 
-        book = Bookdb.query.get(book_id)
+        book = db.session.query(Bookdb).filter(Bookdb.id == book_id).first()
         if not book:
             return {"error": f"Book with id {book_id} does not exist"}, 404
 
@@ -107,7 +107,7 @@ class Book(Resource):
             book.title = data.get("title")
             book.author = data.get("author")
             book.year = data.get("year")
-            booktype = BookTypedb.query.filter_by(name=data.get("type")).first()
+            booktype = db.session.query(BookTypedb).filter(BookTypedb.name == data.get("type")).first()
             book.type_id = booktype.id
             db.session.commit()
             put_id = book.id
@@ -138,7 +138,7 @@ class Book(Resource):
     @api.response(404, "Book not found")
     @api.response(500, "Internal Server Error")
     def delete(self, book_id):
-        book = Bookdb.query.get(book_id)
+        book = db.session.query(Bookdb).filter(Bookdb.id == book_id).first()
         if not book:
             return {"error": f"Book with id {book_id} does not exist"}, 404
         try:
