@@ -6,11 +6,18 @@ from models import Book, BookCollection
 from flask import Flask
 from flask_restx import Api, reqparse, Resource
 
+import logging
+
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///books.db"
 db.init_app(app)
 api = Api(app, doc='/swagger/')
 api.add_namespace(books_api, path='/books')
+
+# Configure Flask logging
+app.logger.setLevel(logging.INFO)  # Set log level to INFO
+handler = logging.FileHandler('app.log')  # Log to a file
+app.logger.addHandler(handler)
 
 parser = reqparse.RequestParser()
 parser.add_argument('id', type=int, required=True, help="ID cannot be blank and must be an integer.")
