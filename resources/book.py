@@ -69,50 +69,6 @@ class Book(Resource):
 
         return result, 200
 
-    @api.doc(description="Add a new book to the database.")
-    @api.expect(book_model, validate=True)
-    @api.marshal_with(book_model)
-    @api.response(201, "Book Created")
-    @api.response(400, "Validation Error")
-    @api.response(500, "Internal Server Error")
-    def post(self):
-        # Get the JSON data from the request
-        data = request.json
-        if data is None:
-            return {"error": "No JSON data provided"}, 400
-
-        if "title" not in data:
-            return {"error": 'Missing "title" field in JSON data'}, 400
-        if "author" not in data:
-            return {"error": 'Missing "author" field in JSON data'}, 400
-        if "type" not in data:
-            return {"error": 'Missing "type" field in JSON data'}, 400
-        if data["type"] not in ["fiction", "non-fiction"]:
-            return {"error": 'Type must be "fiction" or "non-fiction"'}, 400
-        if "year" not in data:
-            return {"error": 'Missing "year" field in JSON data'}, 400
-        if not is_integer(data["year"]):
-            return {"error": "Year is not an integer"}, 400
-        if len(str(data["year"])) > 4:
-            return {"error": "Year is too long"}, 400
-
-        inserted_id = None
-        try:
-            booktype = BookTypedb.query.filter_by(name=data["type"]).first()
-            book = Bookdb(
-                title=data["title"],
-                author=data["author"],
-                type_id=booktype.id,
-                year=data["year"]
-            )
-            db.session.add(book)
-            db.session.commit()
-            inserted_id = book.id
-        except Exception as e:
-            api.logger.error(f'Failed to insert a book! {e}')
-            return {"error": "Book wasn't inserted"}, 500
-        return book, 201
-
     @api.doc(description="Update an existing book.")
     @api.expect(book_model, validate=True)
     @api.marshal_with(book_model)

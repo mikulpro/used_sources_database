@@ -2,6 +2,7 @@ from flask_restx import Resource, fields, reqparse
 from .resources import api
 from flask import request
 from models import db, Book as Bookdb, BookType as BookTypedb
+from utils.utils import is_integer
 
 # defining book_model again cuz i am retarded so this is TODO
 book_model = api.model(
@@ -86,54 +87,52 @@ class BookList(Resource):
             "pages": pagination.pages,
             "page": page
         }
-
+        # New TODO, rewrite to book_model
         return api.marshal(data, book_list_model), 200
 
-    @api.doc(description="Add multiple new books to the database.")
-    @api.expect(book_list_model, validate=True)
-    @api.response(201, "Books Created")
-    @api.response(207, "Partial Success with Errors")
+    @api.doc(description="Add a new book to the database.")
+    @api.expect(book_model, validate=True)
+    @api.marshal_with(book_model)
+    @api.response(201, "Book Created")
     @api.response(400, "Validation Error")
     @api.response(500, "Internal Server Error")
     def post(self):
-        # Parse the JSON body of the request
+        # Get the JSON data from the request
+        data = request.json
+        if data is None:
+            return {"error": "No JSON data provided"}, 400
+
+        if "title" not in data:
+            return {"error": 'Missing "title" field in JSON data'}, 400
+        if "author" not in data:
+            return {"error": 'Missing "author" field in JSON data'}, 400
+        if "type" not in data:
+            return {"error": 'Missing "type" field in JSON data'}, 400
+        if data["type"] not in ["fiction", "non-fiction"]:
+            return {"error": 'Type must be "fiction" or "non-fiction"'}, 400
+        if "year" not in data:
+            return {"error": 'Missing "year" field in JSON data'}, 400
+        if not is_integer(data["year"]):
+            return {"error": "Year is not an integer"}, 400
+        if len(str(data["year"])) > 4:
+            return {"error": "Year is too long"}, 400
+
+        inserted_id = None
         try:
-            books_data = request.get_json()
-        except:
-            return {"error": "Invalid JSON format"}, 400
-
-        # Validate and insert each book
-        inserted_books = []
-        errors = []
-
-        for book_data in books_data["books"]:
-            if all(key in book_data for key in ["title", "author", "type", "year"]):
-                try:
-                    booktype = BookTypedb.query.filter_by(name=book_data["type"]).first()
-                    book = Bookdb(
-                        title=book_data["title"],
-                        author=book_data["author"],
-                        type_id=booktype.id,
-                        year=book_data["year"]
-                    )
-                    db.session.add(book)
-                except Exception as e:
-                    api.logger.error(f'Failed to insert a book! {e}')
-                    errors.append({"book": book})
-
-            else:
-                errors.append({"book": book, "error": "Missing required fields"})
-
-        db.session.commit()
-
-        # Return the result
-        if errors:
-            return {"inserted_books": inserted_books, "errors": errors}, 207
-        else:
-            return {
-                "message": "All books inserted successfully",
-                "inserted_books": inserted_books,
-            }, 201
+            booktype = BookTypedb.query.filter_by(name=data["type"]).first()
+            book = Bookdb(
+                title=data["title"],
+                author=data["author"],
+                type_id=booktype.id,
+                year=data["year"]
+            )
+            db.session.add(book)
+            db.session.commit()
+            inserted_id = book.id
+        except Exception as e:
+            api.logger.error(f'Failed to insert a book! {e}')
+            return {"error": "Book wasn't inserted"}, 500
+        return book, 201
 
     @api.doc(description="TRACE method, disabled for security reasons.")
     @api.response(405, "Method Not Allowed")
