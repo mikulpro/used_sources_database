@@ -39,7 +39,7 @@ class BookCollectionNonID(Resource):
         try:
             collection = BookCollectiondb(name=data['name'], description=data['description'])
             if 'book_ids' in data:
-                books = db.session.query(BookCollectiondb).filter(Bookdb.id.in_(data['book_ids'])).all()
+                books = db.session.query(Bookdb).filter(Bookdb.id.in_(data['book_ids'])).all()
                 if len(books) != len(data['book_ids']):
                     return {"error": "One or more book IDs are invalid"}, 400
                 collection.books = books
