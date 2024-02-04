@@ -4,6 +4,7 @@ from models import db, BookCollection, Book
 from .resources import api
 from sqlalchemy import select
 
+
 # Define the book collection model
 book_collection_model = api.model(
     "BookCollection",
@@ -19,6 +20,7 @@ collection_filter_parser.add_argument('name', type=str, help='Filter by collecti
 collection_filter_parser.add_argument('description', type=str, help='Filter by collection description')
 collection_filter_parser.add_argument('page', type=int, default=1, help='Page number')
 collection_filter_parser.add_argument('per_page', type=int, choices=[10, 20, 50], default=10, help='Collections per page')
+
 
 class BookCollectionNonID(Resource):
     @api.doc(description="Create a new book collection.")
@@ -43,8 +45,8 @@ class BookCollectionNonID(Resource):
             db.session.commit()
             return {"message": "Collection created", "collection_id": collection.id}, 201
         except Exception as e:
-            return {"error": str(e)}, 500
-
+            api.logger.error(f'Failed to insert collection! {e}')
+            return {"error": "Failed to insert collection"}, 500
 
     @api.doc(description="Search collections based on filters.")
     @api.response(200, "Success")
@@ -79,7 +81,8 @@ class BookCollectionNonID(Resource):
         }
 
         return data, 200
-    
+
+
 class BookCollectionID(Resource):
     @api.doc(description="Add books to an existing collection.")
     @api.response(200, "Books added successfully.")
@@ -106,7 +109,8 @@ class BookCollectionID(Resource):
             db.session.commit()
             return {"message": f"Collection {collection_id} updated successfully"}, 200
         except Exception as e:
-            return {"error": str(e)}, 500
+            api.logger.error(f'Failed to modify collection with id {collection_id}! {e}')
+            return {"error": "Failed to modify collection"}, 500
 
     @api.doc(description="Retrieve a book collection.")
     @api.response(200, "Success")
@@ -141,4 +145,5 @@ class BookCollectionID(Resource):
             db.session.commit()
             return {"message": f"Collection {collection_id} deleted successfully"}, 200
         except Exception as e:
-            return {"error": str(e)}, 500
+            api.logger.error(f'Failed to delete collection with id {collection_id}! {e}')
+            return {"error": "Failed to delete collection"}, 500

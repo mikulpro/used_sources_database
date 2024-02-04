@@ -114,7 +114,7 @@ class Book(Resource):
             return book, 200
         except Exception as e:
             api.logger.error(f'Failed to modify book with id {book_id}! {e}')
-            return {"error": "Book wasn't modified",
+            return {"error": "Failed to modify book",
                     "id": put_id}, 500
 
     # not sure this is correct
