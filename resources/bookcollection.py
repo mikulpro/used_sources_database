@@ -5,7 +5,7 @@ from flask_restx import Resource, fields, reqparse
 from db.models import db
 from db.models import BookCollection as BookCollectiondb
 from db.models import Book as Bookdb
-from .resources import api
+from .api import api
 
 
 # Define the book collection model

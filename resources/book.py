@@ -4,7 +4,7 @@ from flask_restx import Resource, fields
 from flask import request
 from db.models import db, Book as Bookdb, BookType as BookTypedb
 from utils.utils import is_integer
-from .resources import api
+from .api import api
 
 # Define individual book model
 book_model = api.model(
