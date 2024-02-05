@@ -4,30 +4,23 @@ services:
   app:
     build: .
     command: python app.py
-    depends_on:
-      - db
-    environment:
-      - MYSQL_HOST=127.0.0.1:3306
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=mysql1234
-      - MYSQL_DB=db1234
     ports:
       - "5000:5000"
     volumes:
       - .:/usr/src/app
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
 
   db:
-    platform: linux/x86_64
-    image: mysql:5.7
-    environment:
-      MYSQL_ROOT_PASSWORD: root1234
-      MYSQL_DATABASE: db1234
-      MYSQL_USER: user
-      MYSQL_PASSWORD: mysql1234
-    ports:
-      - "3306:3306"
+    image: postgres:13
     volumes:
-      - db_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=usoap
+      - POSTGRES_PASSWORD=Heslo123
+      - POSTGRES_DB=used_sources_database
 
 volumes:
-  db_data:
+  postgres_data:

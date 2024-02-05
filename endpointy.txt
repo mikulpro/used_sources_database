@@ -1,23 +1,13 @@
 #### GET ####
-/books
 /books/<int:id>
 /books?params
-
-/booklist
-
-/bookcollections
-/bookcollections/<int:id>
-/bookcollections?params
-
-
+/bookcollections<int:id>
+/bookcollections/?params  #one of these two is nt gurantied
 
 #### POST ####
-/books
-
-/booklist
-
+/books?params
 /bookcollections
-/bookcollections/<int:id>/books
+
 
 #### PUT ####
 /books/<int:id>

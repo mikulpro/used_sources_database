@@ -1,9 +1,11 @@
+# models.py
+
 from __future__ import annotations
 from typing import List
 
-from db_init import db
+from .db_init import db
 
-from sqlalchemy import Integer, String, Column, ForeignKey
+from sqlalchemy import Column, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 
@@ -33,7 +35,7 @@ bookcollection_book_table = db.Table(
     "bookcollection_book",
     db.metadata,
     Column("booklist_id", ForeignKey("bookcollections.id"), primary_key=True),
-    Column("book_id", ForeignKey("books.id"), primary_key=True)
+    Column("book_id", ForeignKey("books.id"), primary_key=True),
 )
 
 
