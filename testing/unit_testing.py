@@ -95,6 +95,7 @@ class BookApiTest(unittest.TestCase):
         response = self.app.delete("/books/books/999")
         self.assertEqual(response.status_code, 404)
 
+
 class BookCollectionApiTest(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
@@ -124,7 +125,6 @@ class BookCollectionApiTest(unittest.TestCase):
         }
         response = self.app.post("/books/collections", json=collection_data)
         self.assertEqual(response.status_code, 201)
-        
 
         response1 = self.app.get("/books/collections?name=Sample Collection")
         self.assertEqual(response1.status_code, 200)
@@ -172,7 +172,6 @@ class BookCollectionApiTest(unittest.TestCase):
     def test_delete_nonexistent_collection(self):
         response = self.app.delete("/books/collections/99999")
         self.assertEqual(response.status_code, 404)
-
 
 
 if __name__ == "__main__":

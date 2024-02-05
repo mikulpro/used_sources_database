@@ -79,7 +79,6 @@ def main():
                 print(str(e))
         else:
             try:
-                data = {}
                 with open(test[2], "r") as file:
                     data = json.load(file)
                 response = getattr(requests, test[1].lower())(test[0], json=data)

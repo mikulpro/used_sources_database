@@ -18,6 +18,12 @@ from PyQt5.QtWidgets import (
 class HttpRequestTester(QWidget):
     def __init__(self):
         super().__init__()
+        self.response_display = None
+        self.select_file_btn = None
+        self.file_path_label = None
+        self.method_selector = None
+        self.url_input = None
+        self.url_input = None
         self.initUI()
 
     def initUI(self):

@@ -1,8 +1,12 @@
 from flask_restx import Resource, fields
 from flask import request
-from db.models import db, Book as Bookdb, BookType as BookTypedb
-from utils.utils import is_integer
+
 from .api import api
+from db.models import db
+from db.models import Book as Bookdb
+from db.models import BookType as BookTypedb
+from utils.utils import is_integer
+
 
 # Define individual book model
 book_model = api.model(
@@ -16,7 +20,8 @@ book_model = api.model(
     },
 )
 
-#TODO get fix
+
+# TODO get fix
 class Book(Resource):
     @api.doc(
         description="Retrieve a book based on query parameters. Can filter by id, author, title, year, and book_type."
@@ -117,7 +122,6 @@ class Book(Resource):
             return {"error": "Failed to modify book",
                     "id": put_id}, 500
 
-    # not sure this is correct
     def head(self):
         return {
             "headers": {

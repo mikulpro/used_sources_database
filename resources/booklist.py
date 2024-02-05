@@ -1,10 +1,12 @@
 from flask_restx import Resource, fields, reqparse
-from .api import api
 from flask import request
+
+from .api import api
 from db.models import db
 from db.models import Book as Bookdb
 from db.models import BookType as BookTypedb
 from utils.utils import is_integer
+
 
 # defining book_model again cuz i am retarded so this is TODO
 book_model = api.model(
@@ -39,7 +41,8 @@ parser.add_argument(
 
 class BookList(Resource):
     @api.doc(
-        description="Retrieve a list of books based on query parameters. Can filter by id, author, title, year, and type."
+        description="Retrieve a list of books based on query parameters. \
+        Can filter by id, author, title, year, and type."
     )
     @api.expect(parser)
     @api.response(200, "Success")
@@ -54,7 +57,7 @@ class BookList(Resource):
         query = db.session.query(Bookdb)
 
         if "author" in request.args:
-                query = query.filter(Bookdb.author == request.args["author"])
+            query = query.filter(Bookdb.author == request.args["author"])
 
         if "title" in request.args:
             query = query.filter(Bookdb.title == request.args["title"])

@@ -26,7 +26,8 @@ parser.add_argument('id', type=int, required=True, help="ID cannot be blank and 
 parser.add_argument('title', required=True, help="Title cannot be blank.")
 parser.add_argument('author', required=True, help="Author cannot be blank.")
 parser.add_argument('type', required=True, help="Type must be either 'fiction' or 'non-fiction'.")
-parser.add_argument('year', type=int, required=True, help="Year cannot be blank and must be an integer lesser than 10000.")
+parser.add_argument('year', type=int, required=True,
+                    help="Year cannot be blank and must be an integer lesser than 10000.")
 
 
 if __name__ == '__main__':
