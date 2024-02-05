@@ -21,6 +21,8 @@ services:
       - POSTGRES_USER=usoap
       - POSTGRES_PASSWORD=Heslo123
       - POSTGRES_DB=used_sources_database
+    ports:
+      - "5433:5432"
 
 volumes:
   postgres_data:

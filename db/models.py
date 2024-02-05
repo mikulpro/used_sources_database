@@ -34,7 +34,7 @@ class Book(db.Model):
 bookcollection_book_table = db.Table(
     "bookcollection_book",
     db.metadata,
-    Column("booklist_id", ForeignKey("bookcollections.id"), primary_key=True),
+    Column("bookcollection_id", ForeignKey("bookcollections.id"), primary_key=True),
     Column("book_id", ForeignKey("books.id"), primary_key=True),
 )
 
@@ -44,5 +44,5 @@ class BookCollection(db.Model):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
-    description: Mapped[str] = mapped_column()
+    description: Mapped[str] = mapped_column(nullable=True)
     books: Mapped[list["Book"]] = relationship(secondary=bookcollection_book_table)
