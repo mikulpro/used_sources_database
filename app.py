@@ -1,4 +1,5 @@
 # app.py
+
 from db.models import db
 from resources.resources import api as books_api
 from db.models import BookType
