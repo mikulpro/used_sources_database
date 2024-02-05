@@ -17,7 +17,11 @@ book_model = api.model(
         "id": fields.Integer,
         "title": fields.String,
         "author": fields.String,
-        "type": fields.String(attribute=lambda book: book.type.name if type(book) == Bookdb and book.type else None),
+        "type": fields.String(
+            attribute=lambda book: book.type.name
+            if type(book) == Bookdb and book.type
+            else None
+        ),
         "year": fields.Integer,
     },
 )
@@ -28,11 +32,15 @@ book_list_model = api.model(
 )
 
 parser = reqparse.RequestParser()
-parser.add_argument('page', type=int, default=1, help='Page number')
-parser.add_argument('per_page', type=int, default=10, help='Books per page')
+parser.add_argument("page", type=int, default=1, help="Page number")
+parser.add_argument("per_page", type=int, default=10, help="Books per page")
 parser.add_argument("title", required=False, help="Search by title")
 parser.add_argument("author", required=False, help="search by Author.")
-parser.add_argument("type", required=False, help="Search by type, only 'fiction' or 'non-fiction' exists.")
+parser.add_argument(
+    "type",
+    required=False,
+    help="Search by type, only 'fiction' or 'non-fiction' exists.",
+)
 parser.add_argument(
     "year",
     type=int,
@@ -79,8 +87,8 @@ class BookList(Resource):
             query = query.filter(Bookdb.type.has(name=book_type))
 
         # Pagination
-        page = args['page']
-        per_page = args['per_page']
+        page = args["page"]
+        per_page = args["per_page"]
         pagination = query.paginate(page=page, per_page=per_page, error_out=False)
         books = pagination.items
 
@@ -92,7 +100,7 @@ class BookList(Resource):
             "books": books,
             "total": pagination.total,
             "pages": pagination.pages,
-            "page": page
+            "page": page,
         }
         # New TODO, rewrite to book_model
         return api.marshal(data, book_list_model), 200
@@ -125,17 +133,21 @@ class BookList(Resource):
             return {"error": "Year is too long"}, 400
 
         try:
-            booktype = db.session.query(BookTypedb).filter(BookTypedb.name == data["type"]).first()
+            booktype = (
+                db.session.query(BookTypedb)
+                .filter(BookTypedb.name == data["type"])
+                .first()
+            )
             book = Bookdb(
                 title=data["title"],
                 author=data["author"],
                 type_id=booktype.id,
-                year=data["year"]
+                year=data["year"],
             )
             db.session.add(book)
             db.session.commit()
         except Exception as e:
-            api.logger.error(f'Failed to insert a book! {e}')
+            api.logger.error(f"Failed to insert a book! {e}")
             return {"error": "Book wasn't inserted"}, 500
         return book, 201
 

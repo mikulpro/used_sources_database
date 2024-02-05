@@ -35,7 +35,7 @@ bookcollection_book_table = db.Table(
     "bookcollection_book",
     db.metadata,
     Column("booklist_id", ForeignKey("bookcollections.id"), primary_key=True),
-    Column("book_id", ForeignKey("books.id"), primary_key=True)
+    Column("book_id", ForeignKey("books.id"), primary_key=True),
 )
 
 

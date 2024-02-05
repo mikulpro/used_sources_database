@@ -17,7 +17,11 @@ book_model = api.model(
         "id": fields.Integer,
         "title": fields.String,
         "author": fields.String,
-        "type": fields.String(attribute=lambda book: book.type.name if type(book) == Bookdb and book.type else None),
+        "type": fields.String(
+            attribute=lambda book: book.type.name
+            if type(book) == Bookdb and book.type
+            else None
+        ),
         "year": fields.Integer,
     },
 )
@@ -114,15 +118,18 @@ class Book(Resource):
             book.title = data.get("title")
             book.author = data.get("author")
             book.year = data.get("year")
-            booktype = db.session.query(BookTypedb).filter(BookTypedb.name == data.get("type")).first()
+            booktype = (
+                db.session.query(BookTypedb)
+                .filter(BookTypedb.name == data.get("type"))
+                .first()
+            )
             book.type_id = booktype.id
             db.session.commit()
             put_id = book.id
             return book, 200
         except Exception as e:
-            api.logger.error(f'Failed to modify book with id {book_id}! {e}')
-            return {"error": "Failed to modify book",
-                    "id": put_id}, 500
+            api.logger.error(f"Failed to modify book with id {book_id}! {e}")
+            return {"error": "Failed to modify book", "id": put_id}, 500
 
     def head(self):
         return {
@@ -152,5 +159,5 @@ class Book(Resource):
             db.session.commit()
             return {"message": f"Book with id {book_id} deleted successfully"}, 200
         except Exception as e:
-            api.logger.error(f'Failed to delete book with id {book_id}! {e}')
+            api.logger.error(f"Failed to delete book with id {book_id}! {e}")
             return {"error": "Book wasn't deleted"}, 500

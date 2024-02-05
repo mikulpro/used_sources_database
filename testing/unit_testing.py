@@ -32,7 +32,7 @@ class BookApiTest(unittest.TestCase):
             "title": "Test Book",
             "author": "Author",
             "type": "fiction",
-            "year": 2021
+            "year": 2021,
         }
         response = self.app.post("/books/books", json=book_data)
         self.assertEqual(response.status_code, 201)
@@ -44,7 +44,7 @@ class BookApiTest(unittest.TestCase):
             "title": "Mock Book",
             "author": "Mock Author",
             "type": "fiction",
-            "year": 2022
+            "year": 2022,
         }
         post_response = self.app.post("/books/books", json=mock_book_data)
 
@@ -64,7 +64,7 @@ class BookApiTest(unittest.TestCase):
             "title": "Old Title",
             "author": "Author",
             "type": "fiction",
-            "year": 2020
+            "year": 2020,
         }
         post_response = self.app.post("/books/books", json=book_data)
 
@@ -73,9 +73,11 @@ class BookApiTest(unittest.TestCase):
             "title": "New Title",
             "author": "Author",
             "type": "fiction",
-            "year": 2021
+            "year": 2021,
         }
-        response = self.app.put(f"/books/books/{post_response.json['id']}", json=update_data)
+        response = self.app.put(
+            f"/books/books/{post_response.json['id']}", json=update_data
+        )
         self.assertEqual(response.status_code, 200)
         self.app.delete(f"/books/books/{post_response.json['id']}")
 
@@ -85,7 +87,7 @@ class BookApiTest(unittest.TestCase):
             "title": "Test Book",
             "author": "Author",
             "type": "fiction",
-            "year": 2021
+            "year": 2021,
         }
         post_response = self.app.post("/books/books", json=book_data)
 
@@ -107,7 +109,7 @@ class BookCollectionApiTest(unittest.TestCase):
         collection_data = {
             "name": "Sample Collection",
             "description": "A sample book collection",
-            "book_ids": []  # Assuming book IDs are optional for creation
+            "book_ids": [],  # Assuming book IDs are optional for creation
         }
         response = self.app.post("/books/collections", json=collection_data)
         self.assertEqual(response.status_code, 201)
@@ -123,14 +125,19 @@ class BookCollectionApiTest(unittest.TestCase):
         collection_data = {
             "name": "Sample Collection",
             "description": "A sample book collection",
-            "book_ids": []  # Assuming book IDs are optional for creation
+            "book_ids": [],  # Assuming book IDs are optional for creation
         }
         response = self.app.post("/books/collections", json=collection_data)
         self.assertEqual(response.status_code, 201)
 
         response1 = self.app.get("/books/collections?name=Sample Collection")
         self.assertEqual(response1.status_code, 200)
-        self.assertTrue(any("Sample Collection" in collection["name"] for collection in response1.json["collections"]))
+        self.assertTrue(
+            any(
+                "Sample Collection" in collection["name"]
+                for collection in response1.json["collections"]
+            )
+        )
 
         # Clean up by deleting the created collection
         self.app.delete(f"/books/collections/{response.json['collection_id']}")
@@ -140,16 +147,16 @@ class BookCollectionApiTest(unittest.TestCase):
         collection_data = {
             "name": "Old Collection Name",
             "description": "A collection before update",
-            "book_ids": []
+            "book_ids": [],
         }
         post_response = self.app.post("/books/collections", json=collection_data)
-        collection_id = post_response.json['collection_id']
+        collection_id = post_response.json["collection_id"]
 
         # Update the collection
         update_data = {
             "name": "New Collection Name",
             "description": "A collection after update",
-            "book_ids": []
+            "book_ids": [],
         }
         response = self.app.put(f"/books/collections/{collection_id}", json=update_data)
         self.assertEqual(response.status_code, 200)
@@ -162,12 +169,12 @@ class BookCollectionApiTest(unittest.TestCase):
         collection_data = {
             "name": "Collection to Delete",
             "description": "This collection will be deleted",
-            "book_ids": []
+            "book_ids": [],
         }
         post_response = self.app.post("/books/collections", json=collection_data)
 
         # Delete the collection
-        collection_id = post_response.json['collection_id']
+        collection_id = post_response.json["collection_id"]
         response = self.app.delete(f"/books/collections/{collection_id}")
         self.assertEqual(response.status_code, 200)
 

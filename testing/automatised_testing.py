@@ -7,64 +7,36 @@ BOOK = "book"
 BOOK_LIST = "booklist"
 
 TO_TEST = [
+    [f"{URL}{BOOK}", "POST", "testing/single_book.json", "Correct book post"],
     [
-        f"{URL}{BOOK}", 
-        "POST", 
-        "testing/single_book.json", 
-        "Correct book post"
+        f"{URL}{BOOK}",
+        "POST",
+        "testing/single_book.json",
+        "Already occupied ID book post",
     ],
-    [
-        f"{URL}{BOOK}", 
-        "POST", 
-        "testing/single_book.json", 
-        "Already occupied ID book post"
-    ],
-    [
-        f"{URL}{BOOK}", 
-        "POST", 
-        "testing/wrong_id.json", 
-        "String ID book post"
-    ],
-    [
-        f"{URL}{BOOK}", 
-        "POST", 
-        "testing/negative_id.json", 
-        "Negative ID book post"],
-    [
-        f"{URL}{BOOK}", 
-        "PUT", 
-        "testing/edited_book.json", 
-        "Editing existing book"],
+    [f"{URL}{BOOK}", "POST", "testing/wrong_id.json", "String ID book post"],
+    [f"{URL}{BOOK}", "POST", "testing/negative_id.json", "Negative ID book post"],
+    [f"{URL}{BOOK}", "PUT", "testing/edited_book.json", "Editing existing book"],
     [
         f"{URL}{BOOK}",
         "PUT",
         "testing/nonexisting_book.json",
         "Editing nonexisting book",
     ],
+    [f"{URL}{BOOK}?id=1", "GET", None, "Getting book with ID 1"],
+    [f"{URL}{BOOK}?id=1", "DELETE", None, "Deleting book with ID 1"],
     [
-        f"{URL}{BOOK}?id=1", 
-        "GET", 
-        None, 
-        "Getting book with ID 1"
+        f"{URL}{BOOK_LIST}",
+        "POST",
+        "testing/book_list_correct.json",
+        "Correct book list post",
     ],
     [
-        f"{URL}{BOOK}?id=1", 
-        "DELETE", 
-        None, 
-        "Deleting book with ID 1"
+        f"{URL}{BOOK_LIST}",
+        "POST",
+        "testing/book_list_wrong.json",
+        "Wrong book list post",
     ],
-    [
-        f"{URL}{BOOK_LIST}", 
-        "POST", 
-        "testing/book_list_correct.json", 
-        "Correct book list post"
-    ],
-    [
-        f"{URL}{BOOK_LIST}", 
-        "POST", 
-        "testing/book_list_wrong.json", 
-        "Wrong book list post"
-    ]
 ]
 
 

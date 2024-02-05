@@ -1,5 +1,6 @@
 # utils.py
 
+
 def is_integer(s):
     try:
         int(s)
